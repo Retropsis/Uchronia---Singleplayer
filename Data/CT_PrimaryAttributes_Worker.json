@@ -1,0 +1,22 @@
+[
+	{
+		"Name": "Attributes.Primary.Strength",
+		"1": 7,
+		"10": 47
+	},
+	{
+		"Name": "Attributes.Primary.Toughness",
+		"1": 5,
+		"10": 52
+	},
+	{
+		"Name": "Attributes.Primary.Dexterity",
+		"1": 2,
+		"10": 21
+	},
+	{
+		"Name": "Attributes.Primary.Perception",
+		"1": 5,
+		"10": 25
+	}
+]
