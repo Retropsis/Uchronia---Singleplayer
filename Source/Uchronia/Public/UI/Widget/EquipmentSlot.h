@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ActorComponents/Inventory/ItemBase.h"
 #include "Inventory/Data/ItemData.h"
 #include "UI/Widget/BaseUserWidget.h"
 #include "EquipmentSlot.generated.h"
@@ -11,6 +12,7 @@ class UBorder;
 enum class EItemType : uint8;
 class UImage;
 class UItemBase;
+
 /**
  * 
  */
@@ -21,10 +23,13 @@ class UCHRONIA_API UEquipmentSlot : public UBaseUserWidget
 
 public:
 	void RefreshSlot() const;
-	
+
 	FORCEINLINE void SetItemReference(UItemBase* Item) { ItemReference = Item; };
 	FORCEINLINE UItemBase* GetItemReference() const { return ItemReference; }
 
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UInventoryComponent> InventoryComponent;
+	
 	UPROPERTY(EditDefaultsOnly)
 	EItemType SlotType = EItemType::EIT_Weapon;
 	
@@ -36,6 +41,9 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, Category="Equipment Slot", meta=(BindWidget))
 	TObjectPtr<UBorder> ItemBorder;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<APlayerCharacter> PlayerCharacter;
 
 protected:
 	virtual void NativeOnInitialized() override;

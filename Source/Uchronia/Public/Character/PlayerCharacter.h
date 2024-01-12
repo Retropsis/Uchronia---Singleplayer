@@ -12,7 +12,6 @@
 #include "World/Item.h"
 #include "PlayerCharacter.generated.h"
 
-class UInventoryWidget;
 struct FItemStruct;
 class APickup;
 class UItemBase;
@@ -43,7 +42,7 @@ struct FInteractionData
  * 
  */
 UCLASS()
-class UCHRONIA_API APlayerCharacter : public ABaseCharacter, public ILootInterface, public IInteractionInterface
+class UCHRONIA_API APlayerCharacter : public ABaseCharacter, public ILootInterface/*, public IInteractionInterface*/
 {
 	GENERATED_BODY()
 
@@ -121,7 +120,6 @@ protected:
 	
 	void Interact();
 
-
 private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCameraComponent> FollowCamera;
@@ -196,6 +194,7 @@ public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
 	ARangeWeapon* GetEquippedWeapon();
 	FORCEINLINE UCombatComponent* GetCombatComponent() const { return CombatComponent; };
+	FORCEINLINE UInventoryComponent* GetInventoryComponent() const { return PlayerInventory; };
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	bool IsWeaponEquipped() const;
 	bool IsAiming() const;
@@ -216,10 +215,10 @@ public:
 	/*
 	 * TODO: T3 Should be in a component
 	 */
-	void Interact(FVector TraceStart, FVector TraceEnd);
-	
-	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerInteract(FVector TraceStart, FVector TraceEnd);
+	// void Interact(FVector TraceStart, FVector TraceEnd);
+	//
+	// UFUNCTION(Server, Reliable, WithValidation)
+	// void ServerInteract(FVector TraceStart, FVector TraceEnd);
 	
 	UPROPERTY(ReplicatedUsing=OnRep_InventoryItems, BlueprintReadWrite)
 	TArray<FItemStruct> InventoryItems;
@@ -257,37 +256,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OpenShop(const TArray<FItemStruct>& Items);
 
-	/*
-	 * T4
-	 */
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInventoryComponent> InventoryComponent;
-
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UInventoryWidget> InventoryWidget;
-
-	void PerformInteractionCheck_(bool bInteractButtonPressed = false);
-	
-	FORCEINLINE void SetInventoryComponent(UInventoryComponent* InInventoryComponent) { InventoryComponent = InInventoryComponent; }
-	FORCEINLINE UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
-	
-	virtual void Interact(APlayerCharacter* PlayerCharacter) override;
-
-	UFUNCTION(Client, Reliable)
-	void ClientUpdateInventory(AWorldItem_* ItemToAdd);
-	
-	UFUNCTION(Server, Reliable)
-	void ServerInteract_(FVector TraceStart, FVector TraceEnd);
-	
-	virtual void AddItem(AWorldItem_* ItemToAdd) override;
-	
-	UFUNCTION(Server, Reliable)
-	void ServerSpawnIem(TSubclassOf<AWorldItem_> ItemToSpawn, FTransform SpawnTransform);
-	UFUNCTION(Client, Reliable)
-	void ClientSpawnIem(TSubclassOf<AWorldItem_> ItemToSpawn, FTransform SpawnTransform);
-	virtual void DropItem(TSubclassOf<AWorldItem_> ItemToSpawn) override;
-
-	UPROPERTY(EditDefaultsOnly, Category="Inventory")
-	float ItemDropDistance = 150.f;
-
 };

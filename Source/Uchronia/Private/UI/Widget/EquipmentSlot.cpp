@@ -3,8 +3,11 @@
 
 #include "UI/Widget/EquipmentSlot.h"
 
+#include "Actor/Weapon/Weapon.h"
+#include "ActorComponents/CombatComponent.h"
 #include "ActorComponents/Inventory/InventoryComponent.h"
 #include "ActorComponents/Inventory/ItemBase.h"
+#include "Character/PlayerCharacter.h"
 #include "Components/Border.h"
 #include "Components/Image.h"
 #include "UI/Widget/ItemDragDropOperation.h"
@@ -25,7 +28,14 @@ bool UEquipmentSlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEv
 		if(ItemDragDrop->SourceItem->ItemType == SlotType)
 		{
 			ItemReference = ItemDragDrop->SourceItem;
-			ItemDragDrop->SourceInventory->TryEquip(ItemDragDrop->SourceItem, SlotType);
+			PlayerCharacter = Cast<APlayerCharacter>(GetOwningPlayerPawn());
+			if (PlayerCharacter)
+			{
+				if(IInventoryInterface* Interface = Cast<IInventoryInterface>(ItemDragDrop->SourceInventory))
+				{
+					Interface->TryEquip(ItemDragDrop->SourceItem);
+				}
+			}
 			RefreshSlot();
 		}
 		// return true will stop  the drop operation at this widget

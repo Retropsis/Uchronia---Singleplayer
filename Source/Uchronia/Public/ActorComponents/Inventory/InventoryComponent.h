@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "ItemBase.h"
 #include "Components/ActorComponent.h"
-#include "Interaction/InteractionInterface.h"
+#include "Interaction/InventoryInterface.h"
+#include "Inventory/Data/GridInventoryData.h"
 #include "InventoryComponent.generated.h"
 
-class AWorldItem_;
+class UItemData_;
 class AWorldInteractable;
 class APickup;
 DECLARE_MULTICAST_DELEGATE(FOnInventoryUpdated);
@@ -66,7 +67,7 @@ struct FItemAddResult
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Blueprintable )
-class UCHRONIA_API UInventoryComponent : public UActorComponent
+class UCHRONIA_API UInventoryComponent : public UActorComponent, public IInventoryInterface
 {
 	GENERATED_BODY()
 
@@ -75,6 +76,9 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	FOnInventoryUpdated OnInventoryUpdated;
+	
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<APlayerCharacter> PlayerCharacter;
 
 	FItemAddResult HandleAddItem(UItemBase* ItemToAdd);
 	
@@ -100,7 +104,6 @@ public:
 	FName GetItemID(const UItemBase* InItem) const { return InItem->ID; };
 	UItemBase* FindItemByID(FName InItemID) const;
 
-
 	void DropAllInventory();
 	void DropItem(UItemBase* ItemToDrop, const int32 Quantity);
 	
@@ -113,7 +116,12 @@ public:
 	/*
 	 * Equipment
 	 */
+	UFUNCTION(BlueprintCallable)
 	void TryEquip(UItemBase* ItemToEquip, EItemType SlotType);
+	virtual void TryEquip(UItemBase* ItemToEquip) override;
+	virtual void TryEquipItem();
+	UFUNCTION(BlueprintCallable)
+	virtual void TryEquipWeapon(UItemBase* ItemToEquip);
 
 	UPROPERTY(ReplicatedUsing=OnRep_EquippedMainHand)
 	UClass* EquippedMainHand;
@@ -128,6 +136,31 @@ public:
 	void OnRep_EquippedMainHand();
 
 	void AttachActorToSocket(UClass* ActorToAttach, const FName Socket) const;
+
+	/*
+	 * Grid
+	 */
+	UPROPERTY(EditAnywhere)
+	int32 GridColumns = 10;
+	
+	UPROPERTY(EditAnywhere)
+	int32 GridRows = 10;
+
+	bool TryAddGridItem(UItemData_* ItemToAdd);
+
+	bool IsRoomAvailable(UItemData_* ItemToCheck, int32 TopLeftIndex);
+	FGridTile ForEachIndex(UItemData_* ItemToCheck, int32 TopLeftIndex);
+	FGridTile InventoryIndexToTileXY(int32 Index);
+	int32 TileXYToInventoryIndex(FGridTile TileCoords);
+	bool IsTileValid(FGridTile Tile);
+	bool GetItemAtIndex(int32 Index, UItemData_*& ItemFound);
+	void AddItemAt(UItemData_* ItemToAdd, int32 TopLeftIndex);
+
+	UPROPERTY()
+	TArray<TObjectPtr<UItemData_>> Items;
+	/*
+	 * Grid
+	 */
 	
 protected:
 	virtual void BeginPlay() override;
@@ -138,7 +171,7 @@ protected:
 	int32 CalculateNumberForFullStack(UItemBase* StackableItem, int32 InitialRequestedAddAmount);
 
 	void AddNewItem(UItemBase* Item, int32 AmountToAdd);
-	
+
 	UPROPERTY(VisibleAnywhere, Category="Inventory")
 	float InventoryTotalWeight;
 	
@@ -150,40 +183,4 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category="Inventory")
 	TArray<TObjectPtr<UItemBase>> InventoryContents;
-
-public:
-	/*
-	 * T4
-	 */
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<APlayerCharacter> PlayerCharacter;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Inventory")
-	TArray<TSubclassOf<AWorldItem_>> Inventory_;
-
-	FORCEINLINE TArray<TSubclassOf<AWorldItem_>> GetInventory_() const { return  Inventory_; }
-
-	UFUNCTION(BlueprintCallable)
-	void AddItemToInventory(AWorldItem_* ItemToAdd, int32 AmountToAdd = 1);
-
-	UFUNCTION(Server, Unreliable)
-	void ServerPlayerSound(USoundBase* InSound);
-	
-	UFUNCTION(NetMulticast, Unreliable)
-	void MulticastPlayerSound(USoundBase* InSound);
-	
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void ServerDestroyActor(AActor* ActorToDestroy);
-	
-	UFUNCTION(Server, Reliable)
-	void ServerSpawnIem(TSubclassOf<AWorldItem_> ItemToSpawn, FTransform SpawnTransform);
-
-	// Not used anymore
-	UFUNCTION(Client, Reliable)
-	void ClientSpawnIem(TSubclassOf<AWorldItem_> ItemToSpawn, FTransform SpawnTransform);
-	
-	void DropItemFromInventory(TSubclassOf<AWorldItem_> ItemToDrop);
-
-	UPROPERTY(EditDefaultsOnly, Category="Inventory")
-	float ItemSpawnDistance = 150.f;
 };

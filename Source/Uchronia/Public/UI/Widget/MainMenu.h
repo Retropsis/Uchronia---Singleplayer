@@ -6,6 +6,8 @@
 #include "UI/Widget/BaseUserWidget.h"
 #include "MainMenu.generated.h"
 
+class UGridInventory;
+class UInventoryComponent;
 class APlayerCharacter;
 /**
  * 
@@ -18,6 +20,15 @@ class UCHRONIA_API UMainMenu : public UBaseUserWidget
 public:
 	UPROPERTY()
 	TObjectPtr<APlayerCharacter> PlayerCharacter;
+
+	UPROPERTY(meta=(BindWidget))
+	TObjectPtr<UGridInventory> GridInventory;
+
+	UPROPERTY(EditAnywhere)
+	float TileSize;
+
+	UPROPERTY()
+	TObjectPtr<UInventoryComponent> InventoryComponent;
 	
 protected:
 	virtual void NativeOnInitialized() override;

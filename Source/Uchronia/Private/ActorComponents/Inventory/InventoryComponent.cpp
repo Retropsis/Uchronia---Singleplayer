@@ -1,11 +1,12 @@
 // Retropsis @ 2023-2024
 
 #include "ActorComponents/Inventory/InventoryComponent.h"
+#include "Actor/Weapon/Weapon.h"
+#include "ActorComponents/CombatComponent.h"
 #include "ActorComponents/Inventory/ItemBase.h"
 #include "Item/Pickup.h"
-#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
-#include "World/WorldItem_.h"
+#include "World/GridItem/ItemData_.h"
 
 UInventoryComponent::UInventoryComponent()
 {
@@ -19,14 +20,16 @@ void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(UInventoryComponent, EquippedMainHand);
 }
 
+
 void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
-	if(PlayerCharacter)
-	{
-		PlayerCharacter->SetInventoryComponent(this);
-	}
+	// PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
+	// if(PlayerCharacter)
+	// {
+	// 	PlayerCharacter->SetInventoryComponent(this);
+	// }
+	Items.Init(nullptr, GridColumns * GridRows);
 }
 
 UItemBase* UInventoryComponent::FindMatchingItem(UItemBase* InItem) const
@@ -304,9 +307,10 @@ void UInventoryComponent::DropItem(UItemBase* ItemToDrop, const int32 Quantity)
 */
 void UInventoryComponent::TryEquip(UItemBase* ItemToEquip, const EItemType SlotType)
 {
-	switch (SlotType) {
+	switch (SlotType)
+	{
 	case EItemType::EIT_Weapon:
-		// ClientSetEquippedMainHand(ItemToEquip->AssetData.Actor->GetClass());
+		TryEquipWeapon(ItemToEquip);
 		break;
 	case EItemType::EIT_Armor:
 		break;
@@ -319,6 +323,23 @@ void UInventoryComponent::TryEquip(UItemBase* ItemToEquip, const EItemType SlotT
 	case EItemType::EIT_Misc:
 		break;
 	default: ;
+	}
+}
+
+void UInventoryComponent::TryEquip(UItemBase* ItemToEquip)
+{
+	TryEquip(ItemToEquip, EItemType::EIT_Weapon);
+}
+
+void UInventoryComponent::TryEquipItem()
+{
+}
+
+void UInventoryComponent::TryEquipWeapon(UItemBase* ItemToEquip)
+{
+	if(AWeapon* WeaponToEquip = Cast<AWeapon>(ItemToEquip->AssetData.Item))
+	{
+		PlayerCharacter->GetCombatComponent()->EquipWeapon(WeaponToEquip);
 	}
 }
 
@@ -360,85 +381,130 @@ void UInventoryComponent::AttachActorToSocket(UClass* ActorToAttach, const FName
 }
 
 /*
-* T4
+* Grid Inventory
 */
-void UInventoryComponent::AddItemToInventory(AWorldItem_* ItemToAdd, int32 AmountToAdd)
+void UInventoryComponent::AddItemAt(UItemData_* ItemToAdd, int32 TopLeftIndex)
 {
-	// TODO: Need to investigate client dupe and eaten drop, but both could be overlap related, need to nuke it
-	if(ItemToAdd == nullptr) return;
+	const FGridTile Tile = InventoryIndexToTileXY(TopLeftIndex);
+	const FIntPoint Dimensions = ItemToAdd->GetDimensions();
 	
-	Inventory_.Add(ItemToAdd->GetClass());
-	// InventoryWidget->UpdateInventory(Inventory_);
-	ItemToAdd->OwningInventory = this;
-	if(ItemToAdd->InteractableSound)
+	for (int32 i = Tile.X; i < Tile.X + Dimensions.X - 1; i++)
 	{
-		if(ItemToAdd->bSoundShouldPropagate)
+		for (int32 j = Tile.Y; j < Tile.Y + Dimensions.Y - 1; j++)
 		{
-			if (PlayerCharacter->HasAuthority())
-            {
-            	MulticastPlayerSound(ItemToAdd->InteractableSound);
-            }
-            else
-            {
-            	ServerPlayerSound(ItemToAdd->InteractableSound);
-            }
-		}
-		else
-		{
-			UGameplayStatics::PlaySoundAtLocation(this, ItemToAdd->InteractableSound, PlayerCharacter->GetActorLocation());
+			// Assign new item pointer to each tile it occupies, this is "recording" the item into inventory
+			// [X - X - X ]
+			// [X - X - X ]
+			const FGridTile ValidTile(i, j);
+			// Items.EmplaceAt(TileXYToInventoryIndex(ValidTile), ItemToAdd);
+			Items[TileXYToInventoryIndex(ValidTile)] = ItemToAdd;
+			GEngine->AddOnScreenDebugMessage(4, 3.f, FColor::Emerald, FString::Printf(TEXT("Items %d"), Items.Num()));
+			OnInventoryUpdated.Broadcast();
 		}
 	}
 }
 
-void UInventoryComponent::ServerPlayerSound_Implementation(USoundBase* InSound)
+bool UInventoryComponent::TryAddGridItem(UItemData_* ItemToAdd)
 {
-	MulticastPlayerSound(InSound);	
-}
+	GEngine->AddOnScreenDebugMessage(2, 3.f, FColor::Emerald, FString::Printf(TEXT("TryAddGridItem")));
 
-void UInventoryComponent::MulticastPlayerSound_Implementation(USoundBase* InSound)
-{
-	if (InSound)
+	if(ItemToAdd)
 	{
-		UGameplayStatics::PlaySoundAtLocation(this, InSound, PlayerCharacter->GetActorLocation());
+		GEngine->AddOnScreenDebugMessage(3, 3.f, FColor::Emerald, FString::Printf(TEXT("ItemToAdd is valid")));
+		// For all Inventory indices, check if item can fit
+		for (int32 i = 0; i < Items.Num(); i++)
+		{
+			if (IsRoomAvailable(ItemToAdd, i))
+			// if (IsRoomAvailable(Items[i], i))
+			{
+				AddItemAt(ItemToAdd, i);
+				return true;
+			}
+		}
 	}
+	return false;
 }
 
-// Used
-void UInventoryComponent::ServerSpawnIem_Implementation(TSubclassOf<AWorldItem_> ItemToSpawn, FTransform SpawnTransform)
+bool UInventoryComponent::IsRoomAvailable(UItemData_* ItemToCheck, int32 TopLeftIndex)
 {
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = PlayerCharacter;
-	SpawnParams.bNoFail = true;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-
-	FVector Location;
-	FVector Direction;
-	UGameplayStatics::GetPlayerController(this, 0)->DeprojectMousePositionToWorld(Location, Direction);
-	TArray<AActor*> ActorsToIgnore;
-	ActorsToIgnore.Add(GetOwner());
-	FHitResult TraceHit;
-	UKismetSystemLibrary::LineTraceSingle(this, Location, Location + Direction * 150.f, TraceTypeQuery1, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, TraceHit, true, FLinearColor::White);
-
-	FVector RandomLocation{ FMath::FRandRange(-75.f, 75.f), FMath::FRandRange(-75.f, 75.f), 75.f };
-	const FVector SpawnLocation{ PlayerCharacter->GetActorLocation() + (PlayerCharacter->GetActorForwardVector() * ItemSpawnDistance + RandomLocation) };
-	const FTransform SpawnTransform_{ PlayerCharacter->GetActorRotation(), SpawnLocation };
-	GetWorld()->SpawnActor<AWorldItem_>(ItemToSpawn, SpawnTransform_, SpawnParams);
+	const FGridTile TileCoords = InventoryIndexToTileXY(TopLeftIndex);
+	const FIntPoint Dimensions = ItemToCheck->GetDimensions();
+	
+	for (int32 i = TileCoords.X; i < TileCoords.X + Dimensions.X - 1; i++)
+	{
+		for (int32 j = TileCoords.Y; j < TileCoords.Y + Dimensions.Y - 1; j++)
+		{
+			if(IsTileValid(FGridTile(i, j)))
+			{
+				const FGridTile ValidTile(i, j);
+				UItemData_* OutItem;
+				if(GetItemAtIndex(TileXYToInventoryIndex(ValidTile), OutItem))
+				{
+					if(OutItem)
+					{
+						return false;
+					}
+				}
+				else
+				{
+					return false;
+				}
+			}
+		}
+	}
+	return true;
 }
 
-// Skipped
-void UInventoryComponent::ClientSpawnIem_Implementation(TSubclassOf<AWorldItem_> ItemToSpawn, FTransform SpawnTransform)
+FGridTile UInventoryComponent::InventoryIndexToTileXY(int32 Index)
 {
-	ServerSpawnIem(ItemToSpawn, SpawnTransform);
+	const int32 X = Index % GridColumns;
+	const int32 Y = FMath::Floor( Index / GridColumns ) ;
+		
+	return FGridTile{ X, Y };
 }
 
-void UInventoryComponent::DropItemFromInventory(TSubclassOf<AWorldItem_> ItemToDrop)
+// Tile Coordinates start from 0, for 5 columns it's 0 to 4
+int32 UInventoryComponent::TileXYToInventoryIndex(FGridTile TileCoords)
 {
-	// ClientSpawnIem(ItemToDrop, FTransform());
-	ServerSpawnIem(ItemToDrop, FTransform());
-	Inventory_.RemoveAt(Inventory_.Find(ItemToDrop));
+	return TileCoords.X + TileCoords.Y * GridColumns;
 }
 
-void UInventoryComponent::ServerDestroyActor_Implementation(AActor* ActorToDestroy)
+bool UInventoryComponent::IsTileValid(const FGridTile TileCoords)
 {
-	ActorToDestroy->Destroy();
+	return TileCoords.X >= 0 && TileCoords.Y >= 0 && TileCoords.X < GridRows && TileCoords.Y < GridColumns;
+	// return Tile.X >= 0 && Tile.Y >= 0 && Tile.X < 0 && Tile.Y < 0;
 }
+
+bool UInventoryComponent::GetItemAtIndex(int32 Index, UItemData_*& ItemFound)
+{
+	if(Items.IsValidIndex(Index))
+	{
+		ItemFound = Items[Index];
+		return true;
+	}
+	ItemFound = nullptr;
+	return false;
+}
+
+
+FGridTile UInventoryComponent::ForEachIndex(UItemData_* ItemToCheck, int32 TopLeftIndex)
+{
+	return  FGridTile();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

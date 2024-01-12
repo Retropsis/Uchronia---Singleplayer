@@ -253,8 +253,4 @@ void ACharacterPlayerController::InventoryButtonPressed()
 
 void ACharacterPlayerController::Interact_()
 {
-	if (APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetCharacter()))
-	{
-		PlayerCharacter->PerformInteractionCheck_(true);
-	}
 }

@@ -22,8 +22,6 @@
 #include "Player/CharacterPlayerController.h"
 #include "Player/CharacterPlayerState.h"
 #include "Uchronia/Uchronia.h"
-#include "UI/Widget/InventoryWidget.h"
-#include "World/WorldItem_.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -92,6 +90,10 @@ void APlayerCharacter::PostInitializeComponents()
 	{
 		CombatComponent->PlayerCharacter = this;
 	}
+	if(InventoryComponent)
+	{
+		InventoryComponent->PlayerCharacter = this;
+	}
 }
 
 void APlayerCharacter::PossessedBy(AController* NewController)
@@ -149,7 +151,6 @@ void APlayerCharacter::Tick(float DeltaSeconds)
 		if(GetWorld()->TimeSince(InteractionData.LastInteractionCheckTime) > InteractionCheckFrequency)
 		{
 			PerformInteractionCheck();
-			PerformInteractionCheck_();
 		}
 	}
 	else
@@ -545,34 +546,27 @@ void APlayerCharacter::PerformInteractionCheck()
 	// DotProduct to check if character looks in same direction as view rotation vector
 	// float LookDirection(FVector::DotProduct(GetActorForwardVector(), GetViewRotation().Vector()));
 	// if(LookDirection > 0)
-	//
-	// FCollisionQueryParams QueryParams;
-	// QueryParams.AddIgnoredActor(this);
-	// FHitResult TraceHit;
-	//
-	// if(GetWorld()->LineTraceSingleByChannel(TraceHit, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
-	// {
-	// 	// TODO: Testing here first
-	// 	if(IInteractionInterface* Interface =Cast<IInteractionInterface>(TraceHit.GetActor()))
-	// 	{
-	// 		Interface->Interact(this);
-	// 	}
-	//
-	// 	
-	// 	if (TraceHit.GetActor() && TraceHit.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
-	// 	{
-	// 		if(TraceHit.GetActor() != InteractionData.CurrentInteractable)
-	// 		{
-	// 			FoundInteractable(TraceHit.GetActor());
-	// 			return;
-	// 		}
-	// 		if(TraceHit.GetActor() == InteractionData.CurrentInteractable)
-	// 		{
-	// 			return;
-	// 		}
-	// 	}
-	// }
-	// NoInteractableFound();
+	
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	FHitResult TraceHit;
+	
+	if(GetWorld()->LineTraceSingleByChannel(TraceHit, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
+	{		
+		if (TraceHit.GetActor() && TraceHit.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
+		{
+			if(TraceHit.GetActor() != InteractionData.CurrentInteractable)
+			{
+				FoundInteractable(TraceHit.GetActor());
+				return;
+			}
+			if(TraceHit.GetActor() == InteractionData.CurrentInteractable)
+			{
+				return;
+			}
+		}
+	}
+	NoInteractableFound();
 }
 
 void APlayerCharacter::FoundInteractable(AActor* NewInteractable)
@@ -589,13 +583,6 @@ void APlayerCharacter::FoundInteractable(AActor* NewInteractable)
 	}
 	InteractionData.CurrentInteractable = NewInteractable;
 	TargetInteractable = NewInteractable;
-
-	//
-	// if(IInteractionInterface* Interface =Cast<IInteractionInterface>(NewInteractable))
-	// {
-	// 	Interface->Interact(this);
-	// }
-	//
 	
 	if(PlayerHUD) PlayerHUD->UpdateInteractionWidget(&TargetInteractable->InteractableData);
 	
@@ -719,45 +706,45 @@ void APlayerCharacter::DropItem(UItemBase* ItemToDrop, const int32 Quantity)
 	}
 }
 
-void APlayerCharacter::Interact(FVector TraceStart, FVector TraceEnd)
-{
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
-	FHitResult TraceHit;
+// void APlayerCharacter::Interact(FVector TraceStart, FVector TraceEnd)
+// {
+// 	FCollisionQueryParams QueryParams;
+// 	QueryParams.AddIgnoredActor(this);
+// 	FHitResult TraceHit;
+//
+// 	if(GetWorld()->LineTraceSingleByChannel(TraceHit, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
+// 	{
+// 		// // TODO: Testing here first
+// 		if(IInteractionInterface* Interface =Cast<IInteractionInterface>(TraceHit.GetActor()))
+// 		{
+// 			Interface->Interact(this);
+// 		}
+// 		
+// 		if (TraceHit.GetActor() && TraceHit.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
+// 		{
+// 			if(TraceHit.GetActor() != InteractionData.CurrentInteractable)
+// 			{
+// 				FoundInteractable(TraceHit.GetActor());
+// 				return;
+// 			}
+// 			if(TraceHit.GetActor() == InteractionData.CurrentInteractable)
+// 			{
+// 				return;
+// 			}
+// 		}
+// 	}
+// 	NoInteractableFound();
+// }
 
-	if(GetWorld()->LineTraceSingleByChannel(TraceHit, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
-	{
-		// // TODO: Testing here first
-		if(IInteractionInterface* Interface =Cast<IInteractionInterface>(TraceHit.GetActor()))
-		{
-			Interface->Interact(this);
-		}
-		
-		if (TraceHit.GetActor() && TraceHit.GetActor()->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
-		{
-			if(TraceHit.GetActor() != InteractionData.CurrentInteractable)
-			{
-				FoundInteractable(TraceHit.GetActor());
-				return;
-			}
-			if(TraceHit.GetActor() == InteractionData.CurrentInteractable)
-			{
-				return;
-			}
-		}
-	}
-	NoInteractableFound();
-}
-
-void APlayerCharacter::ServerInteract_Implementation(FVector TraceStart, FVector TraceEnd)
-{
-	Interact(TraceStart, TraceEnd);
-}
-
-bool APlayerCharacter::ServerInteract_Validate(FVector TraceStart, FVector TraceEnd)
-{
-	return true;
-}
+// void APlayerCharacter::ServerInteract_Implementation(FVector TraceStart, FVector TraceEnd)
+// {
+// 	Interact(TraceStart, TraceEnd);
+// }
+//
+// bool APlayerCharacter::ServerInteract_Validate(FVector TraceStart, FVector TraceEnd)
+// {
+// 	return true;
+// }
 
 /*
  * T3
@@ -895,134 +882,4 @@ void APlayerCharacter::RemoveHunger(float Value)
 		// Update HUD
 	}
 	GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Emerald, FString::Printf(TEXT("Hunger: %f"), Hunger));
-}
-
-
-/*
-* T4
-*/
-// Could be used for trading or interacting with other players
-void APlayerCharacter::Interact(APlayerCharacter* PlayerCharacter)
-{
-	
-}
-
-void APlayerCharacter::ClientUpdateInventory_Implementation(AWorldItem_* ItemToAdd)
-{
-	InventoryComponent->AddItemToInventory(ItemToAdd);
-	if(IsLocallyControlled()) InventoryWidget->UpdateInventory();
-}
-
-void APlayerCharacter::AddItem(AWorldItem_* ItemToAdd)
-{
-	InventoryComponent->AddItemToInventory(ItemToAdd);
-	if(IsLocallyControlled()) InventoryWidget->UpdateInventory();
-	else
-	{
-		ClientUpdateInventory(ItemToAdd);
-	}
-}
-
-void APlayerCharacter::ServerSpawnIem_Implementation(TSubclassOf<AWorldItem_> ItemToSpawn, FTransform SpawnTransform)
-{
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	SpawnParams.bNoFail = true;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-
-	const FVector SpawnLocation{ GetActorLocation() + (GetActorForwardVector() * ItemDropDistance) };
-	const FTransform SpawnTransform_{ GetActorRotation(), SpawnLocation };
-	GetWorld()->SpawnActor<AWorldItem_>(ItemToSpawn, SpawnTransform_, SpawnParams);
-}
-
-void APlayerCharacter::ClientSpawnIem_Implementation(TSubclassOf<AWorldItem_> ItemToSpawn, FTransform SpawnTransform)
-{
-	ServerSpawnIem(ItemToSpawn, SpawnTransform);
-}
-
-void APlayerCharacter::DropItem(TSubclassOf<AWorldItem_> ItemToSpawn)
-{
-	// ServerSpawn was working, trying client too
-	// ServerSpawnIem(ItemToSpawn, FTransform());
-
-	// ClientSpawnIem(ItemToSpawn, FTransform());
-	InventoryComponent->DropItemFromInventory(ItemToSpawn);
-	if(IsLocallyControlled()) InventoryWidget->UpdateInventory();
-}
-
-void APlayerCharacter::PerformInteractionCheck_(bool bInteractButtonPressed)
-{
-	if(!IsLocallyControlled()) return;
-	FVector TraceStart{FollowCamera->GetComponentLocation()};
-	
-	FVector2D ViewportSize;
-	if(GEngine && GEngine->GameViewport)
-	{
-		GEngine->GameViewport->GetViewportSize(ViewportSize);
-	}
-	const FVector2D CrosshairLocation(ViewportSize.X / 2.f, ViewportSize.Y / 2.f);
-	FVector CrosshairWorldPosition;
-	FVector CrosshairWorldDirection;
-	if(UGameplayStatics::DeprojectScreenToWorld(
-		UGameplayStatics::GetPlayerController(this, 0), CrosshairLocation, CrosshairWorldPosition, CrosshairWorldDirection))
-	{
-		TraceStart = CrosshairWorldPosition;
-		const float DistanceToCharacter = (GetActorLocation() - TraceStart).Size();
-		TraceStart += CrosshairWorldDirection * (DistanceToCharacter / 2.f + /*TraceExtent*/0.f);
-	}	
-	// FVector TraceStart(GetPawnViewLocation());
-	FVector TraceEnd(TraceStart + (GetViewRotation().Vector() * InteractionCheckDistance));
-
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
-	FHitResult TraceHit;
-
-	if(GetWorld()->LineTraceSingleByChannel(TraceHit, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
-	{
-		if(IInteractionInterface* Interface =Cast<IInteractionInterface>(TraceHit.GetActor()))
-		{
-			PlayerHUD->ShowInteractionWidget_();
-			if(bInteractButtonPressed)
-			{
-				if(HasAuthority())
-				{
-					Interface->Interact(this);
-				}
-				else
-				{
-					ServerInteract_(TraceStart, TraceEnd);
-				}
-			}
-		}
-		else
-		{
-			PlayerHUD->HideInteractionWidget_();
-		}
-	}
-	else
-	{
-		PlayerHUD->HideInteractionWidget_();
-	}
-	// if (HasAuthority())
-	// {
-	// 	Interact(TraceStart, TraceEnd);
-	// }
-	// else
-	// {
-	// 	ServerInteract(TraceStart, TraceEnd);
-	// }
-}
-
-void APlayerCharacter::ServerInteract__Implementation(FVector TraceStart, FVector TraceEnd)
-{
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
-	FHitResult TraceHit;
-	if(GetWorld()->LineTraceSingleByChannel(TraceHit, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
-	{
-		if(IInteractionInterface* Interface =Cast<IInteractionInterface>(TraceHit.GetActor()))
-		{
-			Interface->Interact(this);
-		}
-	}
 }

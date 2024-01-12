@@ -98,6 +98,7 @@ struct FItemAssetData
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UTexture2D> Icon = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UStaticMesh> Mesh = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<USoundBase> PickupSound = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<AActor> Item = nullptr;
 };
 
 USTRUCT(BlueprintType)
