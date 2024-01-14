@@ -121,6 +121,21 @@ private:
 
 	void InventoryButtonPressed();
 	void Interact_();
+	
+	/*
+	 * Ladder Climbing
+	 */
+	bool bIsClimbing = false;
+
+public:
+	/*
+	 * Ladder Climbing
+	 */
+	UFUNCTION(BlueprintCallable)
+	bool GetIsClimbing() const { return bIsClimbing; }
+	
+	UFUNCTION(BlueprintCallable)
+	void SetIsClimbing(bool Climbing) { bIsClimbing = Climbing; }
 };
 
 
