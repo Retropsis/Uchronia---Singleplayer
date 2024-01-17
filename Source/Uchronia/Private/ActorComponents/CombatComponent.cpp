@@ -360,6 +360,20 @@ void UCombatComponent::EquipWeapon(AWeapon*  WeaponToEquip)
 	PlayerCharacter->bUseControllerRotationYaw = true;
 }
 
+void UCombatComponent::UnequipWeapon(AWeapon* WeaponToUnequip)
+{
+	if(EquippedWeapon)
+	{
+		EquippedWeapon->Destroy();
+		EquippedWeapon = nullptr;
+	}
+	if(EquippedMeleeWeapon)
+	{
+		EquippedMeleeWeapon->Destroy();
+		EquippedMeleeWeapon = nullptr;
+	}
+}
+
 void UCombatComponent::OnRep_EquippedWeapon()
 {
 	if(IsValid(EquippedWeapon) && IsValid(PlayerCharacter))

@@ -29,7 +29,13 @@ public:
 
 	void UpdateCarriedAmmo();
 	void PlayEquipSound() const;
+
+	UFUNCTION(BlueprintCallable)
 	void EquipWeapon(AWeapon* WeaponToEquip);
+	
+	UFUNCTION(BlueprintCallable)
+	void UnequipWeapon(AWeapon* WeaponToUnequip);
+	
 	void JumpToReloadEnd();
 
 	UFUNCTION(BlueprintCallable)
