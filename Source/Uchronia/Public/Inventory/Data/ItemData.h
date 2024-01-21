@@ -4,6 +4,24 @@
 #include "Engine/DataTable.h"
 #include "ItemData.generated.h"
 
+class AWeapon;
+
+UENUM(BlueprintType)
+enum class ESlotType : uint8
+{
+	EIT_None UMETA(DisplayName="None"),
+	EIT_Inventory UMETA(DisplayName="Inventory"),
+	EIT_MainHand UMETA(DisplayName="MainHand"),
+	EIT_Offhand UMETA(DisplayName="Offhand"),
+	EIT_Head UMETA(DisplayName="Head"),
+	EIT_UpperBody UMETA(DisplayName="UpperBody"),
+	EIT_LowerBody UMETA(DisplayName="LowerBody"),
+	EIT_Armor UMETA(DisplayName="Armor"),
+	EIT_Belt UMETA(DisplayName="Belt"),
+	EIT_Feet UMETA(DisplayName="Feet"),
+	EIT_Backpack UMETA(DisplayName="Backpack"),
+};
+
 UENUM(BlueprintType)
 enum class EItemCondition : uint8
 {
@@ -82,11 +100,10 @@ struct FItemNumericData
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) int32 GridWidth = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) int32 GridHeight = 0;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) float Weight = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) int32 MaxStackSize = 0;
 	UPROPERTY(BlueprintReadOnly) bool bIsStackable = false;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) int32 MaxCharges = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) int32 MaxCharges = 0;
 	UPROPERTY(BlueprintReadOnly) bool bHasCharges = false;
 };
 
@@ -96,9 +113,12 @@ struct FItemAssetData
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UTexture2D> Icon = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UMaterialInterface> SpatialIcon = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UMaterialInterface> SpatialIconRotated = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UStaticMesh> Mesh = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<USkeletalMesh> ItemSkeletalMesh = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<USoundBase> PickupSound = nullptr;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<AActor> Item = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<AWeapon> Weapon = nullptr;
 };
 
 USTRUCT(BlueprintType)
@@ -108,6 +128,7 @@ struct FItemData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Data") FName ID = FName();
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Data") FItemTextData TextData = FItemTextData();
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Data") ESlotType SlotType = ESlotType::EIT_Inventory;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Data") EItemType ItemType = EItemType::EIT_Misc;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Data") EItemCondition ItemCondition = EItemCondition::EIC_Pristine;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Data") FItemAssetData AssetData = FItemAssetData();
