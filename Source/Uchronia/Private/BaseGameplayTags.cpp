@@ -127,5 +127,17 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Montage_Attack_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.2"), FString("Montage Attack 2"));
 	GameplayTags.Montage_Attack_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.3"), FString("Montage Attack 3"));
 	GameplayTags.Montage_Attack_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.4"), FString("Montage Attack 4"));
-	GameplayTags.Montage_Attack_5 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.5"), FString("Montage Attack 5"));
+	
+	/*
+	 * Interaction Montages
+	 */
+	GameplayTags.Interaction_Sitting_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Interaction.Sitting.1"), FString("Interaction.Sitting.1"));
+	GameplayTags.Interaction_Sitting_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Interaction.Sitting.2"), FString("Interaction.Sitting.2"));
+	GameplayTags.Interaction_Leaning_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Interaction.Leaning.1"), FString("Interaction.Leaning.1"));
+	GameplayTags.Interaction_Leaning_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Interaction.Leaning.2"), FString("Interaction.Leaning.2"));
+	GameplayTags.Interaction_Carrying_Light = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Interaction.Carrying.Light"), FString("Interaction.Carrying.Light"));
+	GameplayTags.Interaction_Carrying_Average = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Interaction.Carrying.Average"), FString("Interaction.Carrying.Average"));
+	GameplayTags.Interaction_Carrying_Heavy = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Interaction.Carrying.Heavy"), FString("Interaction.Carrying.Heavy"));
+	GameplayTags.Interaction_Chest_Opening = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Interaction.Chest.Opening"), FString("Interaction.Chest.Opening"));
+	GameplayTags.Interaction_Chest_Closing = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Interaction.Chest.Closing"), FString("Interaction.Chest.Closing"));
 }

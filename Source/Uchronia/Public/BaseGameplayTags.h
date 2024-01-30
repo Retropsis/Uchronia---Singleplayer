@@ -108,6 +108,19 @@ public:
  FGameplayTag Montage_Attack_4;
  FGameplayTag Montage_Attack_5;
  
+ /*
+  *  Interaction Montages
+  */
+ FGameplayTag Interaction_Sitting_1;
+ FGameplayTag Interaction_Sitting_2;
+ FGameplayTag Interaction_Leaning_1;
+ FGameplayTag Interaction_Leaning_2;
+ FGameplayTag Interaction_Carrying_Light;
+ FGameplayTag Interaction_Carrying_Average;
+ FGameplayTag Interaction_Carrying_Heavy;
+ FGameplayTag Interaction_Chest_Opening;
+ FGameplayTag Interaction_Chest_Closing;
+ 
  TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
  
 protected:
