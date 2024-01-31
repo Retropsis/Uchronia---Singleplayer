@@ -11,3 +11,5 @@ Road toward ***Preview Candidate I*** :
 ## v.0.0.4 - Rigging the helm controls, starting new character T0
 
 ## v.0.0.5 - Entering Vehicle, more T0 Character work
+
+## v.0.0.6 - Separating vehicle components, new texture, container placement
