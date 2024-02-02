@@ -13,3 +13,5 @@ Road toward ***Preview Candidate I*** :
 ## v.0.0.5 - Entering Vehicle, more T0 Character work
 
 ## v.0.0.6 - Separating vehicle components, new texture, container placement
+
+## v.0.0.7 - Refueling dirty, bandana (needs SKM unequip), Fuel gauge + Fuel entry anims
