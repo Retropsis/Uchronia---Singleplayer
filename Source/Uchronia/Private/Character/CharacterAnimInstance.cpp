@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Types/SurfaceDefinitions.h"
 
 void UCharacterAnimInstance::NativeInitializeAnimation()
 {
@@ -206,4 +207,16 @@ void UCharacterAnimInstance::DirectionalHitReact(const FVector& ImpactPoint)
 	else if (Theta >= 45.f && Theta < 135.f) Section = FName("FromRight");
 		
 	Montage_JumpToSection(Section);
+}
+
+EPhysicalSurface UCharacterAnimInstance::GetSurfaceType()
+{
+	FHitResult HitResult;
+	const FVector Start{GetOwningActor()->GetActorLocation()};
+	const FVector End{Start + FVector(0.f, 0.f, -400.f)};
+	FCollisionQueryParams QueryParams;
+	QueryParams.bReturnPhysicalMaterial = true;
+	GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, QueryParams);
+
+	return UPhysicalMaterial::DetermineSurfaceType(HitResult.PhysMaterial.Get());
 }

@@ -8,7 +8,7 @@ public class Uchronia : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "GameplayAbilities", "UMG" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "GameplayAbilities", "UMG", "PhysicsCore" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "Niagara", "GameplayTags", "GameplayTasks", "AIModule", "Slate", "SlateCore" });
 

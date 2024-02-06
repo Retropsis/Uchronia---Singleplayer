@@ -28,6 +28,9 @@ public:
 	void JumpToReloadEnd();
 	void DirectionalHitReact(const FVector& ImpactPoint);
 
+	UFUNCTION(BlueprintCallable)
+	EPhysicalSurface GetSurfaceType();
+
 protected:
 	UPROPERTY(BlueprintReadOnly, Category="CharacterMovement")
 	TObjectPtr<APlayerCharacter> PlayerCharacter;
