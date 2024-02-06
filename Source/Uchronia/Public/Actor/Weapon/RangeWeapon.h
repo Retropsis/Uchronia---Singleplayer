@@ -21,7 +21,10 @@ public:
 	virtual void Trigger(const FVector& HitTarget);
 	void AddRounds(int32 RoundsToAdd);
 	void SetHUDAmmo();
-	
+
+	/*
+	 * DATA
+	 */
 	/*
 	 * Automatic Fire
 	 */
@@ -38,16 +41,13 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	bool bVisualizeScatter = false;
+	
+	UPROPERTY(EditAnywhere, Category="Weapon Properties|Range Weapon")
+	TObjectPtr<UAnimationAsset> FireAnimation;
 
 protected:
 
-private:
-	/*
-	 * TODO: Move to DataAsset
-	*/
-	UPROPERTY(EditAnywhere, Category="Weapon Properties|Range Weapon")
-	TObjectPtr<UAnimationAsset> FireAnimation;
-	
+private:	
 	/*
 	 * Ammunition and Container
 	*/

@@ -1,11 +1,9 @@
 // Retropsis @ 2023-2024
 
 #include "Actor/Weapon/Weapon.h"
-
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "BaseGameplayTags.h"
-#include "ActorComponents/CombatComponent.h"
 #include "Character/PlayerCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
@@ -44,6 +42,23 @@ AWeapon::AWeapon()
 	PickupWidget->SetupAttachment(GetRootComponent());
 	PickupWidget->SetWidgetSpace(EWidgetSpace::Screen);
 	PickupWidget->SetDrawAtDesiredSize(true);
+}
+
+void AWeapon::OnConstruction(const FTransform& Transform)
+{
+	// Super::OnConstruction(Transform);
+
+	// const FString WeaponDataTablePath{TEXT("/Script/Engine.DataTable'/Game/Blueprints/Data/DT_WeaponData.DT_WeaponData'")};
+
+	if(WeaponDataRow.DataTable.Get() && WeaponDataRow.RowName.IsValid())
+	{
+		if(const FWeaponData* WeaponData =  WeaponDataRow.DataTable->FindRow<FWeaponData>(WeaponDataRow.RowName, TEXT("")))
+		{
+			// WeaponType =
+			WeaponMesh->SetSkeletalMesh(WeaponData->WeaponAssetData.WeaponMesh);
+			EquipSound = WeaponData->WeaponAssetData.EquipSound;
+		}
+	}
 }
 
 void AWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

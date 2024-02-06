@@ -3,22 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "WeaponData.h"
 #include "GameFramework/Actor.h"
 #include "AmmoContainer.generated.h"
 
 class AProjectile;
-
-UENUM(BlueprintType)
-enum class EAmmoContainerType : uint8
-{
-	EACT_Box UMETA(DisplayName="Box"),
-	EACT_Magazine UMETA(DisplayName="Magazine"),
-	EACT_Clip UMETA(DisplayName="Clip"),
-	EACT_Barrel UMETA(DisplayName="Magazine"),
-	EACT_Drum UMETA(DisplayName="Drum"),
-	
-	EACT_MAX UMETA(DisplayName="DefaultMAX")
-};
 
 UCLASS()
 class UCHRONIA_API AAmmoContainer : public AActor

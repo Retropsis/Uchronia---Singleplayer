@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "ScalableFloat.h"
-#include "WeaponTypes.h"
+#include "WeaponData.h"
 #include "GameFramework/Actor.h"
 #include "Weapon.generated.h"
 
@@ -36,14 +36,47 @@ class UCHRONIA_API AWeapon : public AActor
 	
 public:	
 	AWeapon();
+	virtual  void OnConstruction(const FTransform& Transform) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void ShowPickupWidget(const bool bShowWidget) const;
 	virtual void Drop();
 	virtual void OnRep_Owner() override;
 	
 	/*
+	 * DATA VARIABLES
 	 * TODO: Move both CH and FoV stuff to Weapon DataAsset
 	*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+	TObjectPtr<UDataTable> WeaponDataTable;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+	FDataTableRowHandle WeaponDataRow;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties")
+	EWeaponType WeaponType;
+	
+	UPROPERTY(VisibleAnywhere, Category="Weapon Properties")
+	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties|Effects")
+	TObjectPtr<USoundBase> EquipSound;
+	
+	/*
+	 * Damage
+	 */
+	// TODO: Move this to DataAsset
+	UPROPERTY(EditAnywhere, Category="Weapon Properties|Container")
+	TSubclassOf<AProjectile> ProjectileClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties|Damage")
+	TSubclassOf<UGameplayEffect> DamageEffectClass;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties|Damage")
+	TMap<FGameplayTag, FScalableFloat> DamageTypes;
+	/*
+	 * Damage - END
+	 */
+	
 	/*
 	 * Crosshair Textures
 	 */
@@ -63,14 +96,7 @@ public:
 	TObjectPtr<UTexture2D> Crosshair_Bottom;
 
 	/*
-	 * Sound
-	 */
-	/* TODO: To DataAsset */
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties|Effects")
-	TObjectPtr<USoundBase> EquipSound;
-
-	/*
-	 *
+	 * 
 	 */
 	UPROPERTY(EditAnywhere, Category="Weapon Properties|Rotation Correction") 
 	float RightHandRotationRoll = -90.f;
@@ -80,6 +106,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category="Weapon Properties|Rotation Correction") 
 	float RightHandRotationPitch = -90.f;
+	/*
+	 * DATA END
+	 */ 
 	
 protected:
 	virtual void BeginPlay() override;
@@ -106,33 +135,17 @@ protected:
 	
 	UPROPERTY()
 	ACharacterPlayerController* OwnerController;
-	
-	UPROPERTY(VisibleAnywhere, Category="Weapon Properties")
-	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
 
-	/*
-	 * Damage
-	 */
-	// TODO: Move this to DataAsset
-	UPROPERTY(EditAnywhere, Category="Weapon Properties|Container")
-	TSubclassOf<AProjectile> ProjectileClass;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties|Damage")
-	TSubclassOf<UGameplayEffect> DamageEffectClass;
-
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties|Damage")
-	TMap<FGameplayTag, FScalableFloat> DamageTypes;
-	/*
-	 * Damage - END
-	 */
-
-private:
+private:	
 	UPROPERTY(ReplicatedUsing=OnRep_WeaponState, VisibleAnywhere, Category="Weapon Properties")
 	EWeaponState WeaponState;
 
 	UFUNCTION()
 	void OnRep_WeaponState();
 
+	/*
+	 * SOFT DEPRECATED
+	 */
 	UPROPERTY(VisibleAnywhere, Category="Weapon Properties")
 	TObjectPtr<USphereComponent> OverlapSphere;
 
@@ -141,9 +154,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category="Weapon Properties")
 	TObjectPtr<UWidgetComponent> PickupWidget;
-
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties")
-	EWeaponType WeaponType;
 	/*  */
 	
 public:

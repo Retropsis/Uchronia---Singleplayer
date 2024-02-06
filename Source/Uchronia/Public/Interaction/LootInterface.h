@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Actor/Weapon/WeaponTypes.h"
+#include "Actor/Weapon/WeaponData.h"
 #include "UObject/Interface.h"
 #include "LootInterface.generated.h"
 

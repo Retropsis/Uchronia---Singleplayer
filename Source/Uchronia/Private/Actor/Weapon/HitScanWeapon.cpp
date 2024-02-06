@@ -1,9 +1,6 @@
 // Retropsis @ 2023-2024
 
 #include "Actor/Weapon/HitScanWeapon.h"
-#include "AbilitySystemBlueprintLibrary.h"
-#include "AbilitySystemComponent.h"
-#include "BaseGameplayTags.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Engine/SkeletalMeshSocket.h"
