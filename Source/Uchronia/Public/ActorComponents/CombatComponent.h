@@ -56,7 +56,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetMeleeWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled);
 
-	void PickupAmmunition(EWeaponType WeaponType, int32 Amount);
+	void PickupAmmunition(EAmmunitionType AmmunitionType, int32 Amount);
 
 protected:
 	virtual void BeginPlay() override;
@@ -189,7 +189,7 @@ private:
 	UFUNCTION()
 	void OnRep_CarriedAmmo();
 
-	TMap<EWeaponType, int32> CarriedAmmoMap;
+	TMap<EAmmunitionType, int32> CarriedAmmoMap;
 
 	UPROPERTY(EditDefaultsOnly)
 	int32 MaxCarriedAmmo = 90;

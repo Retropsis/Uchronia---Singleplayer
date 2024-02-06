@@ -21,5 +21,5 @@ class UCHRONIA_API ILootInterface
 	GENERATED_BODY()
 
 public:
-	virtual void LootAmmunition(EWeaponType WeaponType, int32 Amount) = 0;
+	virtual void LootAmmunition(EAmmunitionType AmmunitionType, int32 Amount) = 0;
 };

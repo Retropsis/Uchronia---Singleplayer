@@ -122,35 +122,35 @@ void UCharacterAnimInstance::PlayReloadMontage()
 	if(IsValid(ReloadMontage))
 	{
 		Montage_Play(ReloadMontage);
-		FName SectionName;
-		switch (EquippedWeapon->GetWeaponType())
-		{
-		case EWeaponType::EWT_9mm:
-			SectionName = FName("Pistol");
-			break;
-		case EWeaponType::EWT_Rocket:
-			SectionName = FName("RocketLauncher");
-			break;
-		case EWeaponType::EWT_Laser:
-			SectionName = FName("Rifle");
-			break;
-		case EWeaponType::EWT_SubmachineGun:
-			SectionName = FName("Pistol");
-			break;
-		case EWeaponType::EWT_Shotgun:
-			SectionName = FName("Shotgun");
-			break;
-		case EWeaponType::EWT_HighCaliberRifle:
-			SectionName = FName("RocketLauncher");
-			break;
-		case EWeaponType::EWT_GrenadeLauncher:
-			SectionName = FName("Pistol");
-			break;
-		case EWeaponType::EWT_MAX:
-			break;
-		default: ;
-		}
-		Montage_JumpToSection(SectionName);
+		// FName SectionName;
+		// switch (EquippedWeapon->GetWeaponType())
+		// {
+		// case EWeaponType::EWT_9mm:
+		// 	SectionName = FName("Pistol");
+		// 	break;
+		// case EWeaponType::EWT_Rocket:
+		// 	SectionName = FName("RocketLauncher");
+		// 	break;
+		// case EWeaponType::EWT_Laser:
+		// 	SectionName = FName("Rifle");
+		// 	break;
+		// case EWeaponType::EWT_SubmachineGun:
+		// 	SectionName = FName("Pistol");
+		// 	break;
+		// case EWeaponType::EWT_Shotgun:
+		// 	SectionName = FName("Shotgun");
+		// 	break;
+		// case EWeaponType::EWT_HighCaliberRifle:
+		// 	SectionName = FName("RocketLauncher");
+		// 	break;
+		// case EWeaponType::EWT_GrenadeLauncher:
+		// 	SectionName = FName("Pistol");
+		// 	break;
+		// case EWeaponType::EWT_MAX:
+		// 	break;
+		// default: ;
+		// }
+		Montage_JumpToSection(EquippedWeapon->GetReloadSectionName());
 	}
 }
 

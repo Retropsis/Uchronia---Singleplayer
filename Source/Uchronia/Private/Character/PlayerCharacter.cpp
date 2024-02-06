@@ -408,9 +408,9 @@ void APlayerCharacter::SimProxiesTurn()
  */
 
 //~ Loot Interface ~
-void APlayerCharacter::LootAmmunition(const EWeaponType WeaponType, const int32 Amount)
+void APlayerCharacter::LootAmmunition(const EAmmunitionType AmmunitionType, const int32 Amount)
 {
-	CombatComponent->PickupAmmunition(WeaponType, Amount);
+	CombatComponent->PickupAmmunition(AmmunitionType, Amount);
 }
 //~ Loot Interface End ~
 
@@ -493,7 +493,7 @@ void APlayerCharacter::MulticastHandleDeath()
 		CharacterPlayerController->SetHUDWeaponAmmo(0);
 
 		bool bHideAimDownSights = IsLocallyControlled() && CombatComponent && CombatComponent->bAiming &&
-			CombatComponent->EquippedWeapon->GetWeaponType() == EWeaponType::EWT_HighCaliberRifle;
+			CombatComponent->EquippedWeapon->CanAimDownSights();
 		if(bHideAimDownSights)
 		{
 			CharacterPlayerController->AimDownSights(false);

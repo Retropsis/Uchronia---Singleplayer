@@ -7,20 +7,6 @@
 #define TRACE_LENGTH 80000.f
 
 UENUM(BlueprintType)
-enum class EWeaponType : uint8
-{
-	EWT_9mm UMETA(DisplayName="9mm"),
-	EWT_Laser UMETA(DisplayName="Laser"),
-	EWT_Rocket UMETA(DisplayName="Rocket"),
-	EWT_SubmachineGun UMETA(DisplayName="SubmachineGun"),
-	EWT_Shotgun UMETA(DisplayName="Shotgun"),
-	EWT_HighCaliberRifle UMETA(DisplayName="High Caliber Rifle"),
-	EWT_GrenadeLauncher UMETA(DisplayName="Grenade Launcher"),
-
-	EWT_MAX  UMETA(DisplayName="DefaultMAX")
-};
-
-UENUM(BlueprintType)
 enum class EAmmunitionType : uint8
 {
 	EAT_9x19mm UMETA(DisplayName="9x19mm"),
@@ -53,6 +39,24 @@ enum class EAmmoContainerType : uint8
 	EACT_Battery UMETA(DisplayName="Battery"),
 	
 	EACT_MAX UMETA(DisplayName="DefaultMAX")
+};
+
+USTRUCT(BlueprintType)
+struct FReloadData
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FName SectionName = FName("Pistol");
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 InternalCount = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bIsBoltAction = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bCanInterruptReload = false;
 };
 
 USTRUCT(BlueprintType)
@@ -96,6 +100,8 @@ struct FWeaponAssetData
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<USoundBase> EquipSound = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<USkeletalMesh> WeaponMesh = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UAnimationAsset> FireAnimation = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) bool bUsePhysicsAsset = false;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) FName PhysicsBoneName = FName();
 };
 
 USTRUCT(BlueprintType)
@@ -105,6 +111,12 @@ struct FWeaponData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bAutomatic = false;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bCanAimDownSights = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FReloadData ReloadData;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EAmmunitionType AmmunitionType;

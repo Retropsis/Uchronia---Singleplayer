@@ -46,20 +46,28 @@ public:
 	 * DATA VARIABLES
 	 * TODO: Move both CH and FoV stuff to Weapon DataAsset
 	*/
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
-	TObjectPtr<UDataTable> WeaponDataTable;
+	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+	// TObjectPtr<UDataTable> WeaponDataTable;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
 	FDataTableRowHandle WeaponDataRow;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties")
-	EWeaponType WeaponType;
+	EAmmunitionType AmmunitionType;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties")
+	EAmmoContainerType AmmoContainerType;
 	
-	UPROPERTY(VisibleAnywhere, Category="Weapon Properties")
+	UPROPERTY()
 	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
 	
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties|Effects")
+	UPROPERTY()
 	TObjectPtr<USoundBase> EquipSound;
+
+	FName ReloadSectionName = FName();
+	bool bUsePhysicsAsset = false;
+	bool bCanAimDownSights = false;
+	bool bCanInterruptReload = false;
 	
 	/*
 	 * Damage
@@ -131,5 +139,10 @@ private:
 public:
 	void SetWeaponState(const EWeaponState InWeaponState);
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
-	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; }
+	FORCEINLINE EAmmunitionType GetAmmunitionType() const { return AmmunitionType; }
+	FORCEINLINE EAmmoContainerType GetAmmoContainerType() const { return AmmoContainerType; }
+	FORCEINLINE FName GetReloadSectionName() const { return ReloadSectionName; }
+	FORCEINLINE bool ShouldUsePhysicsAsset() const { return bUsePhysicsAsset; }
+	FORCEINLINE bool CanAimDownSights() const { return bCanAimDownSights; }
+	FORCEINLINE bool CanInterruptReload() const { return bCanInterruptReload; }
 };

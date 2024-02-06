@@ -33,10 +33,6 @@ AWeapon::AWeapon()
 
 void AWeapon::OnConstruction(const FTransform& Transform)
 {
-	// Super::OnConstruction(Transform);
-
-	// const FString WeaponDataTablePath{TEXT("/Script/Engine.DataTable'/Game/Blueprints/Data/DT_WeaponData.DT_WeaponData'")};
-
 	if(WeaponDataRow.DataTable.Get() && WeaponDataRow.RowName.IsValid())
 	{
 		if(const FWeaponData* WeaponData =  WeaponDataRow.DataTable->FindRow<FWeaponData>(WeaponDataRow.RowName, TEXT("")))
@@ -44,6 +40,12 @@ void AWeapon::OnConstruction(const FTransform& Transform)
 			// WeaponType =
 			WeaponMesh->SetSkeletalMesh(WeaponData->WeaponAssetData.WeaponMesh);
 			EquipSound = WeaponData->WeaponAssetData.EquipSound;
+			bUsePhysicsAsset = WeaponData->WeaponAssetData.bUsePhysicsAsset;
+			ReloadSectionName = WeaponData->ReloadData.SectionName;
+			bCanInterruptReload = WeaponData->ReloadData.bCanInterruptReload;
+			bCanAimDownSights = WeaponData->bCanAimDownSights;
+			AmmunitionType = WeaponData->AmmunitionType;
+			AmmoContainerType = WeaponData->AmmoContainerType;
 		}
 	}
 }
@@ -120,7 +122,7 @@ void AWeapon::SetWeaponState(const EWeaponState InWeaponState)
 		WeaponMesh->SetSimulatePhysics(false);
 		WeaponMesh->SetEnableGravity(false);
 		WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		if(WeaponType == EWeaponType::EWT_SubmachineGun)
+		if(bUsePhysicsAsset)
 		{
 			WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 			WeaponMesh->SetEnableGravity(true);
@@ -150,7 +152,7 @@ void AWeapon::OnRep_WeaponState()
 		WeaponMesh->SetSimulatePhysics(false);
 		WeaponMesh->SetEnableGravity(false);
 		WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		if(WeaponType == EWeaponType::EWT_SubmachineGun)
+		if(bUsePhysicsAsset)
 		{
 			WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 			WeaponMesh->SetEnableGravity(true);

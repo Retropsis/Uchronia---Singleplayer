@@ -21,7 +21,7 @@ protected:
 	
 private:
 	UPROPERTY(EditAnywhere, Category="Pickup Properties|Ammunition")
-	EWeaponType WeaponType = EWeaponType::EWT_9mm;
+	EAmmunitionType AmmunitionType = EAmmunitionType::EAT_9x19mm;
 	
 	UPROPERTY(EditAnywhere, Category="Pickup Properties|Ammunition")
 	int32 AmmoAmount = 0;

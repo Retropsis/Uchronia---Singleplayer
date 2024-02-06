@@ -114,7 +114,7 @@ bool UCombatComponent::CanFire()
 {
 	if(EquippedWeapon == nullptr) return false;
 
-	if(EquippedWeapon->HasAmmo() && bCanFire && CombatState == ECombatState::ECS_Reloading && EquippedWeapon->GetWeaponType() == EWeaponType::EWT_Shotgun)
+	if(EquippedWeapon->HasAmmo() && bCanFire && CombatState == ECombatState::ECS_Reloading && EquippedWeapon->CanInterruptReload())
 	{
 		return true;
 	}
@@ -139,7 +139,7 @@ void UCombatComponent::MulticastTrigger_Implementation(const FVector_NetQuantize
 {
 	if(EquippedWeapon == nullptr) return;
 	CharacterAnimInstance = CharacterAnimInstance ? CharacterAnimInstance : Cast<UCharacterAnimInstance>(PlayerCharacter->GetAnimInstance());
-	if(CharacterAnimInstance && CombatState == ECombatState::ECS_Reloading && EquippedWeapon->GetWeaponType() == EWeaponType::EWT_Shotgun)
+	if(CharacterAnimInstance && CombatState == ECombatState::ECS_Reloading && EquippedWeapon->CanInterruptReload())
 	{
 		CharacterAnimInstance->PlayFireMontage(bAiming);
 		EquippedWeapon->Trigger(TraceHitTarget);
@@ -306,7 +306,7 @@ void UCombatComponent::SetAiming(const bool IsAiming)
 		PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed = bAiming ? AimWalkSpeed : BaseWalkSpeed;
 	}
 	// TODO: Need to check from DataAsset Info instead
-	if(PlayerCharacter->IsLocallyControlled() && EquippedWeapon->GetWeaponType() == EWeaponType::EWT_HighCaliberRifle)
+	if(PlayerCharacter->IsLocallyControlled() && EquippedWeapon->CanAimDownSights())
 	{
 		CharacterPlayerController = CharacterPlayerController == nullptr ?  Cast<ACharacterPlayerController>(PlayerCharacter->Controller) : CharacterPlayerController;
 		if(CharacterPlayerController)
@@ -418,9 +418,9 @@ void UCombatComponent::UpdateCarriedAmmo()
 {
 	if(!IsValid(EquippedWeapon)) return;
 	
-	if(CarriedAmmoMap.Contains(EquippedWeapon->GetWeaponType()))
+	if(CarriedAmmoMap.Contains(EquippedWeapon->GetAmmunitionType()))
 	{
-		CarriedAmmo = CarriedAmmoMap[EquippedWeapon->GetWeaponType()];
+		CarriedAmmo = CarriedAmmoMap[EquippedWeapon->GetAmmunitionType()];
 	}
 	CharacterPlayerController = CharacterPlayerController == nullptr ?  Cast<ACharacterPlayerController>(PlayerCharacter->Controller) : CharacterPlayerController;
 	if(CharacterPlayerController)
@@ -452,7 +452,7 @@ void UCombatComponent::OnRep_CarriedAmmo()
 		CharacterPlayerController->SetHUDWeaponCarriedAmmo(CarriedAmmo);
 	}
 	bool bJumpToReloadEnd = CombatState == ECombatState::ECS_Reloading &&
-		IsValid(EquippedWeapon) && EquippedWeapon->GetWeaponType() == EWeaponType::EWT_Shotgun &&
+		IsValid(EquippedWeapon) && EquippedWeapon->CanInterruptReload() &&
 			CarriedAmmo == 0;
 	if(bJumpToReloadEnd)
 	{
@@ -511,10 +511,10 @@ void UCombatComponent::UpdateAmmoValues()
 	if(!IsValid(EquippedWeapon)) return;
 	
 	int32 ReloadAmount = AmountToReload();
-	if(CarriedAmmoMap.Contains(EquippedWeapon->GetWeaponType()))
+	if(CarriedAmmoMap.Contains(EquippedWeapon->GetAmmunitionType()))
 	{
-		CarriedAmmoMap[EquippedWeapon->GetWeaponType()] -= ReloadAmount;
-		CarriedAmmo = CarriedAmmoMap[EquippedWeapon->GetWeaponType()];
+		CarriedAmmoMap[EquippedWeapon->GetAmmunitionType()] -= ReloadAmount;
+		CarriedAmmo = CarriedAmmoMap[EquippedWeapon->GetAmmunitionType()];
 	}
 	// Updating Weapon Type Carried Ammo to HUD
 	CharacterPlayerController = CharacterPlayerController == nullptr ?  Cast<ACharacterPlayerController>(PlayerCharacter->Controller) : CharacterPlayerController;
@@ -530,10 +530,10 @@ void UCombatComponent::UpdateSingleAmmoValue()
 {
 	if(!IsValid(EquippedWeapon)) return;
 	
-	if(CarriedAmmoMap.Contains(EquippedWeapon->GetWeaponType()))
+	if(CarriedAmmoMap.Contains(EquippedWeapon->GetAmmunitionType()))
 	{
-		CarriedAmmoMap[EquippedWeapon->GetWeaponType()] -= 1;
-		CarriedAmmo = CarriedAmmoMap[EquippedWeapon->GetWeaponType()];
+		CarriedAmmoMap[EquippedWeapon->GetAmmunitionType()] -= 1;
+		CarriedAmmo = CarriedAmmoMap[EquippedWeapon->GetAmmunitionType()];
 	}
 	// Updating Weapon Type Carried Ammo to HUD
 	CharacterPlayerController = CharacterPlayerController == nullptr ?  Cast<ACharacterPlayerController>(PlayerCharacter->Controller) : CharacterPlayerController;
@@ -563,9 +563,9 @@ int32 UCombatComponent::AmountToReload()
 	if(EquippedWeapon == nullptr) return 0;
 	const int32 RoomInMag = EquippedWeapon->GetMagCapacity() - EquippedWeapon->GetAmmo();
 	
-	if(CarriedAmmoMap.Contains(EquippedWeapon->GetWeaponType()))
+	if(CarriedAmmoMap.Contains(EquippedWeapon->GetAmmunitionType()))
 	{
-		const int32 AmountCarried = CarriedAmmoMap[EquippedWeapon->GetWeaponType()];
+		const int32 AmountCarried = CarriedAmmoMap[EquippedWeapon->GetAmmunitionType()];
 		const int32 Least = FMath::Min(RoomInMag, AmountCarried);
 		return FMath::Clamp(RoomInMag, 0, Least);
 	}
@@ -688,11 +688,11 @@ void UCombatComponent::ShowThrowableItem(const bool bShowItem) const
 	}
 }
 
-void UCombatComponent::PickupAmmunition(const EWeaponType WeaponType, int32 Amount)
+void UCombatComponent::PickupAmmunition(const EAmmunitionType AmmunitionType, int32 Amount)
 {
-	if(CarriedAmmoMap.Contains(WeaponType))
+	if(CarriedAmmoMap.Contains(AmmunitionType))
 	{
-		CarriedAmmoMap[WeaponType] = FMath::Clamp(CarriedAmmoMap[WeaponType] + Amount, 0, MaxCarriedAmmo);
+		CarriedAmmoMap[AmmunitionType] = FMath::Clamp(CarriedAmmoMap[AmmunitionType] + Amount, 0, MaxCarriedAmmo);
 		UpdateCarriedAmmo();
 	}
 }
@@ -702,11 +702,11 @@ void UCombatComponent::PickupAmmunition(const EWeaponType WeaponType, int32 Amou
  */
 void UCombatComponent::InitializeCarriedAmmo()
 {
-	CarriedAmmoMap.Emplace(EWeaponType::EWT_9mm, Starting9mmAmmo);
-	CarriedAmmoMap.Emplace(EWeaponType::EWT_Rocket, StartingRocketAmmo);
-	CarriedAmmoMap.Emplace(EWeaponType::EWT_Laser, StartingLaserAmmo);
-	CarriedAmmoMap.Emplace(EWeaponType::EWT_SubmachineGun, StartingSubmachineGunAmmo);
-	CarriedAmmoMap.Emplace(EWeaponType::EWT_Shotgun, StartingShotgunAmmo);
-	CarriedAmmoMap.Emplace(EWeaponType::EWT_HighCaliberRifle, StartingHighCaliberRifleAmmo);
-	CarriedAmmoMap.Emplace(EWeaponType::EWT_GrenadeLauncher, StartingGrenadeLauncherAmmo);
+	CarriedAmmoMap.Emplace(EAmmunitionType::EAT_9x19mm, Starting9mmAmmo);
+	CarriedAmmoMap.Emplace(EAmmunitionType::EAT_M6A1, StartingRocketAmmo);
+	CarriedAmmoMap.Emplace(EAmmunitionType::EAT_Energy, StartingLaserAmmo);
+	CarriedAmmoMap.Emplace(EAmmunitionType::EAT_45, StartingSubmachineGunAmmo);
+	CarriedAmmoMap.Emplace(EAmmunitionType::EAT_12ga, StartingShotgunAmmo);
+	CarriedAmmoMap.Emplace(EAmmunitionType::EAT_308, StartingHighCaliberRifleAmmo);
+	CarriedAmmoMap.Emplace(EAmmunitionType::EAT_40mm, StartingGrenadeLauncherAmmo);
 }

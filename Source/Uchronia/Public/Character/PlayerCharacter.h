@@ -81,7 +81,7 @@ public:
 	//~ Combat Interface
 
 	//~ Loot Interface
-	virtual void LootAmmunition(EWeaponType WeaponType, int32 Amount) override;
+	virtual void LootAmmunition(EAmmunitionType AmmunitionType, int32 Amount) override;
 	//~ Loot Interface
 
 	virtual void MulticastHandleDeath() override;

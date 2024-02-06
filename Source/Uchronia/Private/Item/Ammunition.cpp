@@ -18,7 +18,7 @@ void AAmmunition::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 
 	if(ILootInterface* LootInterface = Cast<ILootInterface>(OtherActor))
 	{
-		LootInterface->LootAmmunition(WeaponType, AmmoAmount);
+		LootInterface->LootAmmunition(AmmunitionType, AmmoAmount);
 	}
 	Destroy();
 }
