@@ -128,11 +128,11 @@ private:
 	TObjectPtr<USpringArmComponent> SpringArm;
 
 	// TODO: Could be any pickable actor
-	UPROPERTY(ReplicatedUsing=OnRep_OverlappingWeapon)
-	TObjectPtr<AWeapon> OverlappingWeapon;
+	// UPROPERTY(ReplicatedUsing=OnRep_OverlappingWeapon)
+	// TObjectPtr<AWeapon> OverlappingWeapon;
 
-	UFUNCTION()
-	void OnRep_OverlappingWeapon(AWeapon* LastWeapon) const;
+	// UFUNCTION()
+	// void OnRep_OverlappingWeapon(AWeapon* LastWeapon) const;
 
 	/*
 	 * Inventory
@@ -191,7 +191,7 @@ private:
 	virtual void InitAbilityActorInfo() override;
 		
 public:
-	void SetOverlappingWeapon(AWeapon* Weapon);
+	// void SetOverlappingWeapon(AWeapon* Weapon);
 	ARangeWeapon* GetEquippedWeapon();
 	FORCEINLINE UCombatComponent* GetCombatComponent() const { return CombatComponent; };
 	FORCEINLINE UInventoryComponent* GetInventoryComponent() const { return PlayerInventory; };

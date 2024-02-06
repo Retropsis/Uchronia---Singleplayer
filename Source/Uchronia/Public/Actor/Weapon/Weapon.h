@@ -38,7 +38,7 @@ public:
 	AWeapon();
 	virtual  void OnConstruction(const FTransform& Transform) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	void ShowPickupWidget(const bool bShowWidget) const;
+	// void ShowPickupWidget(const bool bShowWidget) const;
 	virtual void Drop();
 	virtual void OnRep_Owner() override;
 	
@@ -113,22 +113,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	void CauseDamage(const FHitResult& Hit);
-
-	UFUNCTION()
-	virtual  void OnSphereBeginOverlap(
-		UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult & SweepResult);
-
-	UFUNCTION()
-	virtual  void OnSphereEndOverlap(
-		UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex);
 	
 	UPROPERTY()
 	APlayerCharacter* OwnerCharacter;
@@ -142,23 +126,10 @@ private:
 
 	UFUNCTION()
 	void OnRep_WeaponState();
-
-	/*
-	 * SOFT DEPRECATED
-	 */
-	UPROPERTY(VisibleAnywhere, Category="Weapon Properties")
-	TObjectPtr<USphereComponent> OverlapSphere;
-
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties")
-	float OverlapSphereRadius = 100.f;
-
-	UPROPERTY(VisibleAnywhere, Category="Weapon Properties")
-	TObjectPtr<UWidgetComponent> PickupWidget;
 	/*  */
 	
 public:
 	void SetWeaponState(const EWeaponState InWeaponState);
-	FORCEINLINE USphereComponent* GetOverlapSphere() const { return OverlapSphere; }
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
 	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; }
 };

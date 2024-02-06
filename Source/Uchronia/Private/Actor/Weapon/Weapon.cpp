@@ -5,8 +5,6 @@
 #include "AbilitySystemComponent.h"
 #include "BaseGameplayTags.h"
 #include "Character/PlayerCharacter.h"
-#include "Components/SphereComponent.h"
-#include "Components/WidgetComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/CharacterPlayerController.h"
 
@@ -31,17 +29,6 @@ AWeapon::AWeapon()
 	WeaponMesh->SetSimulatePhysics(true);
 	WeaponMesh->SetEnableGravity(true);
 	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-
-	OverlapSphere = CreateDefaultSubobject<USphereComponent>(TEXT("OverlapSphere"));
-	OverlapSphere->SetupAttachment(GetRootComponent());
-	OverlapSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
-	OverlapSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	OverlapSphere->SetSphereRadius(OverlapSphereRadius);
-
-	PickupWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("PickupWidget"));
-	PickupWidget->SetupAttachment(GetRootComponent());
-	PickupWidget->SetWidgetSpace(EWidgetSpace::Screen);
-	PickupWidget->SetDrawAtDesiredSize(true);
 }
 
 void AWeapon::OnConstruction(const FTransform& Transform)
@@ -71,14 +58,14 @@ void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if(HasAuthority())
-	{
-		OverlapSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		OverlapSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-		OverlapSphere->OnComponentBeginOverlap.AddDynamic(this, &AWeapon::OnSphereBeginOverlap);
-		OverlapSphere->OnComponentEndOverlap.AddDynamic(this, &AWeapon::OnSphereEndOverlap);
-	}
-	if (PickupWidget) PickupWidget->SetVisibility(false);
+	// TODO: Reminder Interaction should be Server Checked
+	// if(HasAuthority())
+	// {
+	// 	OverlapSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	// 	OverlapSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	// 	OverlapSphere->OnComponentBeginOverlap.AddDynamic(this, &AWeapon::OnSphereBeginOverlap);
+	// 	OverlapSphere->OnComponentEndOverlap.AddDynamic(this, &AWeapon::OnSphereEndOverlap);
+	// }
 }
 
 void AWeapon::CauseDamage(const FHitResult& Hit)
@@ -122,29 +109,6 @@ void AWeapon::OnRep_Owner()
 	}
 }
 
-void AWeapon::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                                   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if (APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(OtherActor))
-	{
-		PlayerCharacter->SetOverlappingWeapon(this);
-	}
-}
-
-void AWeapon::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	if (APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(OtherActor))
-	{
-		PlayerCharacter->SetOverlappingWeapon(nullptr);
-	}
-}
-
-void AWeapon::ShowPickupWidget(const bool bShowWidget) const
-{
-	if(PickupWidget) PickupWidget->SetVisibility(bShowWidget);
-}
-
 void AWeapon::SetWeaponState(const EWeaponState InWeaponState)
 {
 	WeaponState = InWeaponState;
@@ -152,8 +116,7 @@ void AWeapon::SetWeaponState(const EWeaponState InWeaponState)
 	case EWeaponState::EWS_Initial:
 		break;
 	case EWeaponState::EWS_Equipped:
-		ShowPickupWidget(false);
-		OverlapSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		// ShowPickupWidget(false);
 		WeaponMesh->SetSimulatePhysics(false);
 		WeaponMesh->SetEnableGravity(false);
 		WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -165,7 +128,6 @@ void AWeapon::SetWeaponState(const EWeaponState InWeaponState)
 		}
 		break;
 	case EWeaponState::EWS_Dropped:
-		if(HasAuthority()) OverlapSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		WeaponMesh->SetSimulatePhysics(true);
 		WeaponMesh->SetEnableGravity(true);
 		WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
@@ -183,7 +145,7 @@ void AWeapon::OnRep_WeaponState()
 	case EWeaponState::EWS_Initial:
 		break;
 	case EWeaponState::EWS_Equipped:
-		ShowPickupWidget(false);
+		// ShowPickupWidget(false);
 		// OverlapSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		WeaponMesh->SetSimulatePhysics(false);
 		WeaponMesh->SetEnableGravity(false);

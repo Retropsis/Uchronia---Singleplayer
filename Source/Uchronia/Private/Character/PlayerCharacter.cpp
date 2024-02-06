@@ -72,7 +72,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME_CONDITION(APlayerCharacter, OverlappingWeapon, COND_OwnerOnly);
+	// DOREPLIFETIME_CONDITION(APlayerCharacter, OverlappingWeapon, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(APlayerCharacter, TargetInteractable, COND_OwnerOnly);
 
 	/*
@@ -205,7 +205,7 @@ void APlayerCharacter::EquipWeapon()
 	{
 		if(HasAuthority())
 		{
-			CombatComponent->EquipWeapon(OverlappingWeapon);
+			// CombatComponent->EquipWeapon(OverlappingWeapon);
 		}
 		else
 		{
@@ -218,7 +218,7 @@ void APlayerCharacter::ServerEquipButtonPressed_Implementation()
 {
 	if(CombatComponent)
 	{
-		CombatComponent->EquipWeapon(OverlappingWeapon);
+		// CombatComponent->EquipWeapon(OverlappingWeapon);
 	}	
 }
 
@@ -415,24 +415,24 @@ void APlayerCharacter::LootAmmunition(const EWeaponType WeaponType, const int32 
 //~ Loot Interface End ~
 
 
-void APlayerCharacter::SetOverlappingWeapon(AWeapon* InWeapon)
-{
-	if(OverlappingWeapon) OverlappingWeapon->ShowPickupWidget(false);
-	OverlappingWeapon = InWeapon;
-	if(IsLocallyControlled())
-	{
-		if(OverlappingWeapon) OverlappingWeapon->ShowPickupWidget(true);
-	}
-}
+// void APlayerCharacter::SetOverlappingWeapon(AWeapon* InWeapon)
+// {
+// 	if(OverlappingWeapon) OverlappingWeapon->ShowPickupWidget(false);
+// 	OverlappingWeapon = InWeapon;
+// 	if(IsLocallyControlled())
+// 	{
+// 		if(OverlappingWeapon) OverlappingWeapon->ShowPickupWidget(true);
+// 	}
+// }
 
-void APlayerCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon) const
-{
-	if(OverlappingWeapon) OverlappingWeapon->ShowPickupWidget(true);
-	if(LastWeapon)
-	{
-		LastWeapon->ShowPickupWidget(false);
-	}
-}
+// void APlayerCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon) const
+// {
+// 	if(OverlappingWeapon) OverlappingWeapon->ShowPickupWidget(true);
+// 	if(LastWeapon)
+// 	{
+// 		LastWeapon->ShowPickupWidget(false);
+// 	}
+// }
 
 bool APlayerCharacter::IsWeaponEquipped() const
 {
