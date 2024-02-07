@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Actor/Weapon/WeaponData.h"
 #include "Engine/DataTable.h"
 #include "ItemData.generated.h"
 
@@ -131,6 +132,7 @@ struct FItemData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Data") ESlotType SlotType = ESlotType::EIT_Inventory;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Data") EItemType ItemType = EItemType::EIT_Misc;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Data") EItemCondition ItemCondition = EItemCondition::EIC_Pristine;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Data|Type") EAmmunitionType AmmunitionType = EAmmunitionType::EAT_9x19mm;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Data") FItemAssetData AssetData = FItemAssetData();
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Data") FItemNumericData NumericData = FItemNumericData();
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Data") FItemStatistics ItemStatistics = FItemStatistics();

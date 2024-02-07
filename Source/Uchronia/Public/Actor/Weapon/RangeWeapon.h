@@ -16,6 +16,7 @@ class UCHRONIA_API ARangeWeapon : public AWeapon
 
 public:
 	ARangeWeapon();
+	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void OnRep_Owner() override;
 	virtual void Trigger(const FVector& HitTarget);
@@ -25,24 +26,17 @@ public:
 	/*
 	 * DATA
 	 */
-	/*
-	 * Automatic Fire
-	 */
-	/* TODO: To DataAsset */
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties|Combat")
+	/* Automatic Fire */
 	float FireInterval = .15f;
-
-	/* TODO: To DataAsset */
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties|Combat")
 	bool bAutomatic = false;
-
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties|Container")
-	TObjectPtr<USoundBase> EmptyContainerSound;
-
-	UPROPERTY(EditAnywhere)
 	bool bVisualizeScatter = false;
+	float MarksmanFOV = 30.f;
+	float MarksmanInterpSpeed = 20.f;
 	
-	UPROPERTY(EditAnywhere, Category="Weapon Properties|Range Weapon")
+	UPROPERTY()
+	TObjectPtr<USoundBase> EmptyContainerSound;
+	
+	UPROPERTY()
 	TObjectPtr<UAnimationAsset> FireAnimation;
 
 protected:
@@ -71,18 +65,6 @@ private:
 	/*
 	 * Ammunition and Container - END
 	 */
-	
-	/*
-	 * Marksman Mode
-	 */
-	UPROPERTY(EditAnywhere, Category="Weapon Properties|Marksman Mode")
-	float MarksmanFOV = 30.f;
-
-	UPROPERTY(EditAnywhere, Category="Weapon Properties|Marksman Mode")
-	float MarksmanInterpSpeed = 20.f;
-	/*
-	 * Marksman Mode - END
-	*/
 
 public:
 	FORCEINLINE AAmmoContainer* GetAmmoContainer() const { return AmmoContainer; }

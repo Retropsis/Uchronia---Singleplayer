@@ -16,6 +16,7 @@ class UCHRONIA_API AHitScanWeapon : public ARangeWeapon
 	GENERATED_BODY()
 
 public:
+	virtual void OnConstruction(const FTransform& Transform) override;
 	void ApplyWeaponEffects(const FTransform& SocketTransform, const FHitResult& Hit) const;
 	virtual void Trigger(const FVector& HitTarget) override;
 
@@ -48,13 +49,10 @@ protected:
 private:
 	/*
 	 * Trace End with Scatter
+	 * DistanceToSphere, Set accuracy radius at 10m
+	 * SphereRadius, Accuracy radius at 10m
 	 */
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties|Scatter")
 	bool bUseScatter = false;
-	
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties|Scatter")
-	float DistanceToSphere = 800.f;
-
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties|Scatter")
+	float DistanceToSphere = 1000.f;
 	float SphereRadius = 75.f;
 };

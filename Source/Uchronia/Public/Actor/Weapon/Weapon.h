@@ -38,7 +38,6 @@ public:
 	AWeapon();
 	virtual  void OnConstruction(const FTransform& Transform) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	// void ShowPickupWidget(const bool bShowWidget) const;
 	virtual void Drop();
 	virtual void OnRep_Owner() override;
 	
@@ -46,9 +45,6 @@ public:
 	 * DATA VARIABLES
 	 * TODO: Move both CH and FoV stuff to Weapon DataAsset
 	*/
-	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
-	// TObjectPtr<UDataTable> WeaponDataTable;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
 	FDataTableRowHandle WeaponDataRow;
 

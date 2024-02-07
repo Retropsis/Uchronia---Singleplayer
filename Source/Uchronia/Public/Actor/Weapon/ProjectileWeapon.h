@@ -18,6 +18,7 @@ class UCHRONIA_API AProjectileWeapon : public ARangeWeapon
 	GENERATED_BODY()
 
 public:
+	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void Trigger(const FVector& HitTarget) override;
 
 protected:
@@ -27,15 +28,10 @@ protected:
 private:
 	/*
 	 * Trace End with Scatter
+	 * DistanceToSphere, Set accuracy radius at 10m
+	 * SphereRadius, Accuracy radius at 10m
 	 */
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties|Scatter")
 	bool bUseScatter = false;
-
-	// Set accuracy radius at 10m
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties|Scatter")
 	float DistanceToSphere = 1000.f;
-
-	// Accuracy radius at 10m
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties|Scatter")
 	float SphereRadius = 75.f;
 };

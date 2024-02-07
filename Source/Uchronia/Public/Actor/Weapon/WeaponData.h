@@ -63,6 +63,12 @@ USTRUCT(BlueprintType)
 struct FWeaponStatistics 
 {
 	GENERATED_BODY()
+
+	//~ Base
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float MarksmanFOV = 30.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float MarksmanInterpSpeed = 20.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float DistanceToSphere = 1000.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float SphereRadius = 75.f;
 	
 	//~ Damage
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) float FireInterval = 0.f;
@@ -98,6 +104,7 @@ struct FWeaponAssetData
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<USoundBase> EquipSound = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<USoundBase> EmptyContainerSound = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<USkeletalMesh> WeaponMesh = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UAnimationAsset> FireAnimation = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) bool bUsePhysicsAsset = false;
@@ -108,9 +115,14 @@ USTRUCT(BlueprintType)
 struct FWeaponData : public FTableRowBase
 {
 	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Debug") bool bVisualizeScatter = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bAutomatic = false;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bUseScatter = false;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bCanAimDownSights = false;

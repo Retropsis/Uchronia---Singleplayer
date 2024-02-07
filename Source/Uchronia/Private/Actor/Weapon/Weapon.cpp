@@ -37,7 +37,6 @@ void AWeapon::OnConstruction(const FTransform& Transform)
 	{
 		if(const FWeaponData* WeaponData =  WeaponDataRow.DataTable->FindRow<FWeaponData>(WeaponDataRow.RowName, TEXT("")))
 		{
-			// WeaponType =
 			WeaponMesh->SetSkeletalMesh(WeaponData->WeaponAssetData.WeaponMesh);
 			EquipSound = WeaponData->WeaponAssetData.EquipSound;
 			bUsePhysicsAsset = WeaponData->WeaponAssetData.bUsePhysicsAsset;
@@ -118,7 +117,6 @@ void AWeapon::SetWeaponState(const EWeaponState InWeaponState)
 	case EWeaponState::EWS_Initial:
 		break;
 	case EWeaponState::EWS_Equipped:
-		// ShowPickupWidget(false);
 		WeaponMesh->SetSimulatePhysics(false);
 		WeaponMesh->SetEnableGravity(false);
 		WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -147,7 +145,6 @@ void AWeapon::OnRep_WeaponState()
 	case EWeaponState::EWS_Initial:
 		break;
 	case EWeaponState::EWS_Equipped:
-		// ShowPickupWidget(false);
 		// OverlapSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		WeaponMesh->SetSimulatePhysics(false);
 		WeaponMesh->SetEnableGravity(false);

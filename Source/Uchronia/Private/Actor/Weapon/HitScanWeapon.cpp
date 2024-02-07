@@ -8,6 +8,21 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Particles/ParticleSystemComponent.h"
 
+void AHitScanWeapon::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	
+	if(WeaponDataRow.DataTable.Get() && WeaponDataRow.RowName.IsValid())
+	{
+		if(const FWeaponData* WeaponData =  WeaponDataRow.DataTable->FindRow<FWeaponData>(WeaponDataRow.RowName, TEXT("")))
+		{
+			bUseScatter = WeaponData->bUseScatter;
+			DistanceToSphere = WeaponData->WeaponStatistics.DistanceToSphere;
+			SphereRadius = WeaponData->WeaponStatistics.SphereRadius;
+		}
+	}
+}
+
 void AHitScanWeapon::Trigger(const FVector& HitTarget)
 {
 	Super::Trigger(HitTarget);

@@ -1,14 +1,12 @@
 // Retropsis @ 2023-2024
 
 #include "Character/CharacterAnimInstance.h"
-
 #include "Actor/Weapon/RangeWeapon.h"
 #include "Actor/Weapon/Weapon.h"
 #include "Character/PlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Types/SurfaceDefinitions.h"
 
 void UCharacterAnimInstance::NativeInitializeAnimation()
 {
@@ -122,34 +120,6 @@ void UCharacterAnimInstance::PlayReloadMontage()
 	if(IsValid(ReloadMontage))
 	{
 		Montage_Play(ReloadMontage);
-		// FName SectionName;
-		// switch (EquippedWeapon->GetWeaponType())
-		// {
-		// case EWeaponType::EWT_9mm:
-		// 	SectionName = FName("Pistol");
-		// 	break;
-		// case EWeaponType::EWT_Rocket:
-		// 	SectionName = FName("RocketLauncher");
-		// 	break;
-		// case EWeaponType::EWT_Laser:
-		// 	SectionName = FName("Rifle");
-		// 	break;
-		// case EWeaponType::EWT_SubmachineGun:
-		// 	SectionName = FName("Pistol");
-		// 	break;
-		// case EWeaponType::EWT_Shotgun:
-		// 	SectionName = FName("Shotgun");
-		// 	break;
-		// case EWeaponType::EWT_HighCaliberRifle:
-		// 	SectionName = FName("RocketLauncher");
-		// 	break;
-		// case EWeaponType::EWT_GrenadeLauncher:
-		// 	SectionName = FName("Pistol");
-		// 	break;
-		// case EWeaponType::EWT_MAX:
-		// 	break;
-		// default: ;
-		// }
 		Montage_JumpToSection(EquippedWeapon->GetReloadSectionName());
 	}
 }

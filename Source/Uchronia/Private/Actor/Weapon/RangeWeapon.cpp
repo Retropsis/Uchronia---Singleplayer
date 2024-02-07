@@ -18,6 +18,24 @@ ARangeWeapon::ARangeWeapon()
 	// }
 }
 
+void ARangeWeapon::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	
+	if(WeaponDataRow.DataTable.Get() && WeaponDataRow.RowName.IsValid())
+	{
+		if(const FWeaponData* WeaponData =  WeaponDataRow.DataTable->FindRow<FWeaponData>(WeaponDataRow.RowName, TEXT("")))
+		{
+			bVisualizeScatter = WeaponData->bVisualizeScatter;
+			bAutomatic = WeaponData->bAutomatic;
+			EmptyContainerSound = WeaponData->WeaponAssetData.EmptyContainerSound;
+			FireInterval = WeaponData->WeaponStatistics.FireInterval;
+			MarksmanFOV = WeaponData->WeaponStatistics.MarksmanFOV;
+			MarksmanInterpSpeed = WeaponData->WeaponStatistics.MarksmanInterpSpeed;
+		}
+	}
+}
+
 void ARangeWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

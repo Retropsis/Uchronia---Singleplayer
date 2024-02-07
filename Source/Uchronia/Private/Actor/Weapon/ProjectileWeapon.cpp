@@ -10,6 +10,21 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/KismetMathLibrary.h"
 
+void AProjectileWeapon::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	
+	if(WeaponDataRow.DataTable.Get() && WeaponDataRow.RowName.IsValid())
+	{
+		if(const FWeaponData* WeaponData =  WeaponDataRow.DataTable->FindRow<FWeaponData>(WeaponDataRow.RowName, TEXT("")))
+		{
+			bUseScatter = WeaponData->bUseScatter;
+			DistanceToSphere = WeaponData->WeaponStatistics.DistanceToSphere;
+			SphereRadius = WeaponData->WeaponStatistics.SphereRadius;
+		}
+	}
+}
+
 void AProjectileWeapon::Trigger(const FVector& HitTarget)
 {
 	Super::Trigger(HitTarget);
