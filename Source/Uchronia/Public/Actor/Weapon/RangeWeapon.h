@@ -33,6 +33,14 @@ public:
 	float MarksmanFOV = 30.f;
 	float MarksmanInterpSpeed = 20.f;
 
+	/* Aiming Modifiers */
+	float RecoveryDelay = 1.f;
+	float RecoveryPerSecond = 1.f;
+	float CrouchModifier = 1.f;
+	float RunModifier = 1.f;
+	float JumpModifier = 1.f;
+	float MarksmanModifier = 1.f;
+
 	UPROPERTY()
 	TObjectPtr<USkeletalMeshComponent> AmmunitionContainer;
 	

@@ -210,17 +210,26 @@ void UCombatComponent::SetHUDCrosshairs(float DeltaTime)
 			const FVector2D VelocityMultiplierRange(0.f, 1.f);
 			FVector Velocity = PlayerCharacter->GetVelocity();
 			Velocity.Z = 0.f;
+
+			/* Weapon Modifiers */
+			if(EquippedWeapon)
+			{
+				RunModifier = EquippedWeapon->RunModifier;
+				JumpModifier = EquippedWeapon->JumpModifier;
+				MarksmanModifier = EquippedWeapon->MarksmanModifier;				
+			}
+			
 			CrosshairVelocityModifier = FMath::GetMappedRangeValueClamped(WalkSpeedRange, VelocityMultiplierRange, Velocity.Size());
 
 			if(PlayerCharacter->GetCharacterMovement()->IsFalling())
 			{
 				// TODO: Weapon Airborne Modifier
-				CrosshairAirborneModifier = FMath::FInterpTo(CrosshairAirborneModifier, 2.25f, DeltaTime, 2.25f);
+				CrosshairAirborneModifier = FMath::FInterpTo(CrosshairAirborneModifier, BaseAirborneSpread, DeltaTime, 2.25f);
 			}
 			else
 			{
 				// TODO: Weapon Airborne Recovery Modifier
-				CrosshairAirborneModifier = FMath::FInterpTo(CrosshairAirborneModifier, 0.f, DeltaTime, 30.f);
+				CrosshairAirborneModifier = FMath::FInterpTo(CrosshairAirborneModifier, 0.f, DeltaTime, BaseRecoverySpeed);
 			}
 			if(bAiming)
 			{
@@ -228,7 +237,7 @@ void UCombatComponent::SetHUDCrosshairs(float DeltaTime)
 			}
 			else
 			{
-				CrosshairMarksmanModifier = FMath::FInterpTo(CrosshairMarksmanModifier, 0.f, DeltaTime, 30.f);
+				CrosshairMarksmanModifier = FMath::FInterpTo(CrosshairMarksmanModifier, 0.f, DeltaTime, BaseRecoverySpeed);
 			}
 			// TODO: Weapon Recoil Recovery
 			CrosshairRecoilModifier = FMath::FInterpTo(CrosshairRecoilModifier, 0.f, DeltaTime, 3.f);
@@ -236,9 +245,9 @@ void UCombatComponent::SetHUDCrosshairs(float DeltaTime)
 			// TODO: Try using a min clamp instead
 			HUDPackage.CrosshairSpread =
 				0.5f +
-				CrosshairVelocityModifier +
-				CrosshairAirborneModifier -
-				CrosshairMarksmanModifier +
+				CrosshairVelocityModifier * RunModifier +
+				CrosshairAirborneModifier * JumpModifier -
+				CrosshairMarksmanModifier * MarksmanModifier +
 				CrosshairRecoilModifier;
 			PlayerHUD->SetHUDPackage(HUDPackage);
 		}

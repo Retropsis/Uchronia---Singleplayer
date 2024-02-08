@@ -142,6 +142,10 @@ private:
 	float CrosshairAirborneModifier;
 	float CrosshairMarksmanModifier;
 	float CrosshairRecoilModifier;
+	
+	float RunModifier = 1.f;
+	float JumpModifier = 1.f;
+	float MarksmanModifier = 1.f;	
 
 	FVector HitTarget;
 	
@@ -157,8 +161,6 @@ private:
 	float DefaultFOV;
 	float CurrentFOV;
 
-	
-
 	/* TODO: To DataAsset */
 	UPROPERTY(EditDefaultsOnly, Category="Combat Properties")
 	float MarksmanFOV = 30.f;
@@ -166,6 +168,12 @@ private:
 	/* TODO: To DataAsset */
 	UPROPERTY(EditDefaultsOnly, Category="Combat Properties")
 	float MarksmanInterpSpeed = 20.f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Combat Properties")
+	float BaseRecoverySpeed = 30.f;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Combat Properties")
+	float BaseAirborneSpread = 2.25f;
 
 	void InterpFOV(float DeltaTime);
 

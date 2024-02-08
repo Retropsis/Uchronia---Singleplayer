@@ -37,29 +37,29 @@ struct FWeaponStatistics
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) float SphereRadius = 75.f;
 	
 	//~ Damage
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float FireInterval = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float HealthDamage = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float HardDamage = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float BloodLoss = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float DropoffRange = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float MinDamageRange = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float MaxRange = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float AccuracyRadiusAt10m = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float FireInterval = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float HealthDamage = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float HardDamage = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float BloodLoss = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float DropoffRange = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float MinDamageRange = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float MaxRange = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float AccuracyRadiusAt10m = 1.f;
 	
 	//~ Aiming
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float PerShotModifier = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float ShotModifierCap = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float RecoveryDelay = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float RecoveryPerSecond = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float GravityModifier = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float CrouchModifier = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float WalkModifier = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float RunModifier = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float SprintModifier = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float JumpModifier = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float LeanModifier = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float MarksmanModifier = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) float InVehicleModifier = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float PerShotModifier = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float ShotModifierCap = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float RecoveryDelay = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float RecoveryPerSecond = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float GravityModifier = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float CrouchModifier = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float WalkModifier = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float RunModifier = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float SprintModifier = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float JumpModifier = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float LeanModifier = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float MarksmanModifier = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) float InVehicleModifier = 1.f;
 
 	//~ Movement
 };

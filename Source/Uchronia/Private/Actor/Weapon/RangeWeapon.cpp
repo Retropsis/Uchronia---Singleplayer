@@ -36,6 +36,10 @@ void ARangeWeapon::OnConstruction(const FTransform& Transform)
 			FireInterval = WeaponData->WeaponStatistics.FireInterval;
 			MarksmanFOV = WeaponData->WeaponStatistics.MarksmanFOV;
 			MarksmanInterpSpeed = WeaponData->WeaponStatistics.MarksmanInterpSpeed;
+
+			RunModifier = WeaponData->WeaponStatistics.RunModifier;
+			JumpModifier = WeaponData->WeaponStatistics.JumpModifier;
+			MarksmanModifier = WeaponData->WeaponStatistics.MarksmanModifier;
 		}
 	}
 }
