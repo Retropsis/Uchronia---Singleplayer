@@ -1,6 +1,7 @@
 // Retropsis @ 2023-2024
 
 #include "Actor/Weapon/RangeWeapon.h"
+#include "Actor/Weapon/AmmoContainer.h"
 #include "Actor/Weapon/Casing.h"
 #include "ActorComponents/CombatComponent.h"
 #include "Character/PlayerCharacter.h"
@@ -10,7 +11,10 @@
 
 ARangeWeapon::ARangeWeapon()
 {
-	// AmmoContainer = CreateDefaultSubobject<AAmmoContainer>(TEXT("Ammo Container"));
+	AmmoContainer = CreateDefaultSubobject<UAmmoContainer>(TEXT("AmmoContainer"));
+	AmmoContainer->SetupAttachment(WeaponMesh);
+	AmmoContainer->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
 	// const USkeletalMeshSocket* ClipSocket =WeaponMesh->GetSocketByName(FName("ClipSocket"));
 	// if(ClipSocket)
 	// {
@@ -28,7 +32,7 @@ void ARangeWeapon::OnConstruction(const FTransform& Transform)
 		{
 			bVisualizeScatter = WeaponData->bVisualizeScatter;
 			bAutomatic = WeaponData->bAutomatic;
-			EmptyContainerSound = WeaponData->WeaponAssetData.EmptyContainerSound;
+			// EmptyContainerSound = WeaponData->WeaponAssetData.EmptyContainerSound;
 			FireInterval = WeaponData->WeaponStatistics.FireInterval;
 			MarksmanFOV = WeaponData->WeaponStatistics.MarksmanFOV;
 			MarksmanInterpSpeed = WeaponData->WeaponStatistics.MarksmanInterpSpeed;

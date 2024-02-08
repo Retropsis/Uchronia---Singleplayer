@@ -372,6 +372,8 @@ void UCombatComponent::UnequipWeapon(AWeapon* WeaponToUnequip)
 		EquippedMeleeWeapon->Destroy();
 		EquippedMeleeWeapon = nullptr;
 	}
+	PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
+	PlayerCharacter->bUseControllerRotationYaw = false;
 }
 
 void UCombatComponent::OnRep_EquippedWeapon()
@@ -412,6 +414,8 @@ void UCombatComponent::DropEquippedWeapon() const
 		EquippedMeleeWeapon->Drop();
 		EquippedMeleeWeapon->MarkAsGarbage();
 	}
+	PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
+	PlayerCharacter->bUseControllerRotationYaw = false;
 }
 
 void UCombatComponent::UpdateCarriedAmmo()

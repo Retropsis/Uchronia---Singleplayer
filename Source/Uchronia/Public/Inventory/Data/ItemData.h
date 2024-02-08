@@ -14,6 +14,7 @@ enum class ESlotType : uint8
 	EIT_Inventory UMETA(DisplayName="Inventory"),
 	EIT_MainHand UMETA(DisplayName="MainHand"),
 	EIT_Offhand UMETA(DisplayName="Offhand"),
+	EIT_AnyHand UMETA(DisplayName="AnyHand"),
 	EIT_Head UMETA(DisplayName="Head"),
 	EIT_UpperBody UMETA(DisplayName="UpperBody"),
 	EIT_LowerBody UMETA(DisplayName="LowerBody"),

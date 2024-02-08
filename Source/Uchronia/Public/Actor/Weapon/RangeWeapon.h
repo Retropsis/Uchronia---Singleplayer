@@ -32,6 +32,11 @@ public:
 	bool bVisualizeScatter = false;
 	float MarksmanFOV = 30.f;
 	float MarksmanInterpSpeed = 20.f;
+
+	UPROPERTY()
+	TObjectPtr<USkeletalMeshComponent> AmmunitionContainer;
+	
+	FName AmmunitionContainerSocket;
 	
 	UPROPERTY()
 	TObjectPtr<USoundBase> EmptyContainerSound;
@@ -51,7 +56,7 @@ private:
 	void SpendRound();
 	
 	UPROPERTY(EditAnywhere, Category="Weapon Properties|Container")
-	TObjectPtr<AAmmoContainer> AmmoContainer;
+	TObjectPtr<UAmmoContainer> AmmoContainer;
 
 	UPROPERTY(EditAnywhere, Category="Weapon Properties|Container")
 	TSubclassOf<ACasing> CasingClass;
@@ -67,7 +72,7 @@ private:
 	 */
 
 public:
-	FORCEINLINE AAmmoContainer* GetAmmoContainer() const { return AmmoContainer; }
+	FORCEINLINE UAmmoContainer* GetAmmoContainer() const { return AmmoContainer; }
 	FORCEINLINE float GetMarksmanFOV() const { return MarksmanFOV; }
 	FORCEINLINE float GetMarksmanInterpSpeed() const { return MarksmanInterpSpeed; }
 	FORCEINLINE bool HasAmmo() const { return Ammo > 0; }

@@ -7,7 +7,7 @@
 #include "ProjectileWeapon.generated.h"
 
 class UGameplayEffect;
-class AAmmoContainer;
+class UAmmoContainer;
 class AProjectile;
 /**
  *  Weapon spawning a physical projectile, including rocket and grenade launchers 

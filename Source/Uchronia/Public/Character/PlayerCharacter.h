@@ -77,7 +77,9 @@ public:
 	virtual int32 GetCharacterLevel() override;
 	virtual void HitReact(const FVector& ImpactPoint) override;
 	virtual int32 GetGrenadeCount_Implementation() override;
-	virtual void IncrementGrenadeCount_Implementation() override;
+	virtual void SetGrenadeCount_Implementation(int32 NewCount) override;
+	virtual void AdjustGrenadeCount_Implementation(int32 Amount) override;
+	virtual void UseAvailableGrenade_Implementation() override;
 	//~ Combat Interface
 
 	//~ Loot Interface

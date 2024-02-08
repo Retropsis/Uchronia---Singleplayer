@@ -14,7 +14,7 @@ class AProjectile;
 class ACharacterPlayerController;
 class APlayerCharacter;
 class ACasing;
-class AAmmoContainer;
+class UAmmoContainer;
 class UWidgetComponent;
 
 UENUM(BlueprintType)

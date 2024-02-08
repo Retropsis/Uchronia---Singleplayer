@@ -10,36 +10,44 @@
 class AProjectile;
 
 UCLASS()
-class UCHRONIA_API AAmmoContainer : public AActor
+class UCHRONIA_API UAmmoContainer : public USkeletalMeshComponent
 {
 	GENERATED_BODY()
 	
 public:	
-	AAmmoContainer();
-	virtual void Tick(float DeltaTime) override;
+	UAmmoContainer();
+	virtual void InitializeComponent() override;
 
+	bool UseAvailableRound();
+	void SetCount(int32 NewCount);
+	void AdjustCount(int32 Amount);
+	void PlayEmptyContainerSound();
+	
 protected:
 	virtual void BeginPlay() override;
 	
-	// TODO: Should be a Data Asset
-	UPROPERTY(EditAnywhere, Category="Container Properties")
-	TObjectPtr<USkeletalMeshComponent> ContainerMesh;
-
-	UPROPERTY(EditAnywhere, Category="Container Properties")
-	FName ContainerName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Container Properties")
+	FDataTableRowHandle AmmunitionDataRow;
 	
-	UPROPERTY(EditAnywhere, Category="Container Properties")
-	uint32 MaxCount = 8;
+	FName ContainerSocketName;
 	uint32 CurrentCount = 0;
-
-	UPROPERTY(EditAnywhere, Category="Container Properties")
+	uint32 MaxCapacity = 8;
 	EAmmoContainerType AmmoContainerType = EAmmoContainerType::EACT_Magazine;
-	
-	UPROPERTY(EditAnywhere, Category="Container Properties")
+	EAmmunitionType AmmunitionType = EAmmunitionType::EAT_9x19mm;
 	TSubclassOf<AProjectile> ProjectileClass;
+	
+	UPROPERTY()
+	TObjectPtr<USoundBase> EmptyContainerSound = nullptr;
+	UPROPERTY()
+	TObjectPtr<USoundBase> InsertContainerSound = nullptr;
 
 private:
 
 public:	
 	FORCEINLINE TSubclassOf<AProjectile> GetProjectileClass() const { return ProjectileClass; }
+	FORCEINLINE int32 GetCurrentCount() const { return CurrentCount; }
+	FORCEINLINE int32 GetMaxCapacity() const { return MaxCapacity; }
+	FORCEINLINE bool IsContainerFull() const { return CurrentCount == MaxCapacity; }
+	FORCEINLINE bool IsContainerEmpty() const { return MaxCapacity <= 0; }
+	FORCEINLINE EAmmunitionType GetAmmunitionType() const { return  AmmunitionType; }
 };

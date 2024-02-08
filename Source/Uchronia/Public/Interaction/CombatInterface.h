@@ -80,7 +80,13 @@ public:
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	int32 GetGrenadeCount();
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SetGrenadeCount(int32 NewCount);
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void AdjustGrenadeCount(int32 Amount);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void IncrementGrenadeCount();
+	void UseAvailableGrenade();
 };

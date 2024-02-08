@@ -56,6 +56,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetMeleeWeaponCollisionEnabled(ECollisionEnabled::Type CollisionEnabled);
 
+	UFUNCTION(BlueprintCallable)
 	void PickupAmmunition(EAmmunitionType AmmunitionType, int32 Amount);
 
 protected:

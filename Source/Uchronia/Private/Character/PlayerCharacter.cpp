@@ -273,7 +273,31 @@ int32 APlayerCharacter::GetGrenadeCount_Implementation()
 	return 0;
 }
 
-void APlayerCharacter::IncrementGrenadeCount_Implementation()
+void APlayerCharacter::SetGrenadeCount_Implementation(int32 NewCount)
+{
+	if(CombatComponent)
+	{
+		CombatComponent->GrenadeCount = FMath::Clamp(NewCount, 0 , CombatComponent->MaxGrenadeCount);
+		if(ACharacterPlayerController* CharacterPlayerController = Cast<ACharacterPlayerController>(GetController()))
+		{
+			CharacterPlayerController->SetHUDGrenadeCount(CombatComponent->GrenadeCount);
+		}
+	}
+}
+
+void APlayerCharacter::AdjustGrenadeCount_Implementation(int32 Amount)
+{
+	if(CombatComponent)
+	{
+		CombatComponent->GrenadeCount = FMath::Clamp(CombatComponent->GrenadeCount + Amount, 0 , CombatComponent->MaxGrenadeCount);
+		if(ACharacterPlayerController* CharacterPlayerController = Cast<ACharacterPlayerController>(GetController()))
+		{
+			CharacterPlayerController->SetHUDGrenadeCount(CombatComponent->GrenadeCount);
+		}
+	}
+}
+
+void APlayerCharacter::UseAvailableGrenade_Implementation()
 {
 	if(CombatComponent)
 	{
