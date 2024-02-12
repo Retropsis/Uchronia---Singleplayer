@@ -9,16 +9,6 @@
 
 class AVehicle;
 
-UENUM()
-enum class EHelmDirection : uint8
-{
-	EHD_Stop UMETA(DisplayName="Stop"),
-	EHD_Forward UMETA(DisplayName="Forward"),
-	EHD_Left UMETA(DisplayName="Left"),
-	EHD_Right UMETA(DisplayName="Right"),
-	EHD_Reverse UMETA(DisplayName="Reverse"),
-};
-
 UCLASS()
 class UCHRONIA_API AHelm : public AActor, public IInteractionInterface
 {
@@ -37,11 +27,6 @@ public:
 	
 	void UpdateInteractableData();
 
-	void	InitiateMovement();
-	
-	UPROPERTY(EditInstanceOnly, Category="Helm Properties")
-	TObjectPtr<UStaticMeshComponent> ButtonMesh;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Helm Properties")
 	AVehicle* VehicleReference;
 
@@ -53,9 +38,6 @@ public:
 	
 	UPROPERTY(VisibleInstanceOnly, Category="Helm Properties")
 	FInteractableData InstanceInteractableData;
-
-	UPROPERTY(EditAnywhere, Category="Helm Properties")
-	EHelmDirection HelmDirection = EHelmDirection::EHD_Forward;
 	
 protected:
 	virtual void BeginPlay() override;

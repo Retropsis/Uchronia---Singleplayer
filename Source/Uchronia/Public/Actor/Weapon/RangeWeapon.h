@@ -42,7 +42,7 @@ public:
 	float MarksmanModifier = 1.f;
 
 	UPROPERTY()
-	TObjectPtr<USkeletalMeshComponent> AmmunitionContainer;
+	TObjectPtr<UAmmoContainer> AmmunitionContainer;
 	
 	FName AmmunitionContainerSocket;
 	
