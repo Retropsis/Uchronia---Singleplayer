@@ -31,4 +31,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	USkeletalMesh* GetHardPointMesh() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	USkeletalMesh* GetComponentPreview() const;
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	TSubclassOf<UAnimInstance> GetAnimClass() const;
 };

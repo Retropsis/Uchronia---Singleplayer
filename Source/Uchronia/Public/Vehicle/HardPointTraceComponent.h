@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ComponentData.h"
 #include "Interaction/HardPointInterface.h"
 #include "Vehicle/TraceComponent.h"
 #include "HardPointTraceComponent.generated.h"

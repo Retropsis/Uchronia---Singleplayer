@@ -92,6 +92,10 @@
 		{
 			"Name": "AvfMedia",
 			"Enabled": false
+		},
+		{
+			"Name": "NaniteDisplacedMesh",
+			"Enabled": true
 		}
 	]
 }
