@@ -34,5 +34,7 @@ struct FComponentData: public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Component Data") TSubclassOf<UAnimInstance> ComponentAnimInstance = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Component Data") float ComponentMass = 100.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Component Data") EHardPoint HardPoint = EHardPoint::EHP_None;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Component Data") FName SmokeSocketName = FName();
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Component Data") TSubclassOf<AActor> ComponentActor = nullptr;
 	
 };

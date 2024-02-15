@@ -18,6 +18,7 @@ class UCHRONIA_API UHardPointTraceComponent : public UTraceComponent, public IHa
 
 public:
 	virtual EHardPoint GetHardPoint_Implementation() const override;
+	virtual void InitializeComponent() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|HardPoint")
 	EHardPoint HardPoint = EHardPoint::EHP_None;

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Types/Mechanics.h"
 #include "UObject/Interface.h"
+#include "Vehicle/ComponentData.h"
 #include "HardPointInterface.generated.h"
 
 // This class does not need to be modified.
@@ -23,6 +24,9 @@ class UCHRONIA_API IHardPointInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	APawn* GetOwningVehicle();
+	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	EHardPoint GetHardPoint() const;
 
