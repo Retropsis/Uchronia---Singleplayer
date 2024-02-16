@@ -25,6 +25,9 @@ class UCHRONIA_API IHardPointInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FName GetComponentDataRowName() const;
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	APawn* GetOwningVehicle();
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
@@ -41,4 +44,10 @@ public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	TSubclassOf<UAnimInstance> GetAnimClass() const;
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	TSubclassOf<AActor> GetComponentActorClass() const;
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FName GetHardPointSocketName() const;
 };

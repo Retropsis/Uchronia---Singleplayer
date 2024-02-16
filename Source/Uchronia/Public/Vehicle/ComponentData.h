@@ -14,8 +14,7 @@ enum class EHardPoint : uint8
 	EHP_Hatch_Back_L UMETA(DisplayName="Hatch_Back_L"),
 	EHP_Hatch_Back_R UMETA(DisplayName="Hatch_Back_R"),
 	EHP_Helm UMETA(DisplayName="Helm"),
-	EHP_Engine_L UMETA(DisplayName="Engine_L"),
-	EHP_Engine_R UMETA(DisplayName="Engine_R"),
+	EHP_Engine_L UMETA(DisplayName="Engine"),
 	EHP_Lampost UMETA(DisplayName="Lampost"),
 	
 	EHP_MAX UMETA(DisplayName="DefaultMAX")
@@ -34,6 +33,7 @@ struct FComponentData: public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Component Data") TSubclassOf<UAnimInstance> ComponentAnimInstance = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Component Data") float ComponentMass = 100.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Component Data") EHardPoint HardPoint = EHardPoint::EHP_None;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Component Data") FName HardPointSocketName = FName();
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Component Data") FName SmokeSocketName = FName();
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Component Data") TSubclassOf<AActor> ComponentActor = nullptr;
 	
