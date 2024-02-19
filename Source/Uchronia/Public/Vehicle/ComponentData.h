@@ -16,6 +16,7 @@ enum class EHardPoint : uint8
 	EHP_Helm UMETA(DisplayName="Helm"),
 	EHP_Engine_L UMETA(DisplayName="Engine"),
 	EHP_Lampost UMETA(DisplayName="Lampost"),
+	EHP_Gauge UMETA(DisplayName="Gauge"),
 	
 	EHP_MAX UMETA(DisplayName="DefaultMAX")
 };
