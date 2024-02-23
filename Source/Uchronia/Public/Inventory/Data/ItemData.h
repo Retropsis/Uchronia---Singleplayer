@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Actor/Weapon/AttachmentData.h"
 #include "Actor/Weapon/WeaponData.h"
 #include "Engine/DataTable.h"
 #include "ItemData.generated.h"
@@ -120,7 +121,9 @@ struct FItemAssetData
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UStaticMesh> Mesh = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<USkeletalMesh> ItemSkeletalMesh = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<USoundBase> PickupSound = nullptr;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<AWeapon> Weapon = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) TMap<EAttachmentType, FAttachmentData> AttachmentMap;
 };
 
 USTRUCT(BlueprintType)

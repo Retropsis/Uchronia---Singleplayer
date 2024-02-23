@@ -4,6 +4,16 @@
 #include "ComponentData.generated.h"
 
 UENUM(BlueprintType)
+enum class EComponentInteractionType : uint8
+{
+	ECIT_Hatch UMETA(DisplayName="Hatch"),
+	ECIT_FuelEntry UMETA(DisplayName="FuelEntry"),
+	ECIT_FuelGauge UMETA(DisplayName="FuelGauge"),
+	
+	ECIT_Max UMETA(DisplayName="DefaultMAX")
+};
+
+UENUM(BlueprintType)
 enum class EHardPoint : uint8
 {
 	EHP_None UMETA(DisplayName="None"),

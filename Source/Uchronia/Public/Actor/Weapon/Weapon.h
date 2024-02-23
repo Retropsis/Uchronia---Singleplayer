@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AttachmentData.h"
 #include "GameplayTagContainer.h"
 #include "ScalableFloat.h"
 #include "WeaponData.h"
@@ -47,6 +48,9 @@ public:
 	*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
 	FDataTableRowHandle WeaponDataRow;
+
+	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties")
+	TArray<FAttachmentData> Attachments;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties")
 	EAmmunitionType AmmunitionType;
