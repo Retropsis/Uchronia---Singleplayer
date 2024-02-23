@@ -1,6 +1,8 @@
 // Retropsis @ 2023-2024
 
 #include "ActorComponents/CombatComponent.h"
+
+#include "K2Node_AddComponentByClass.h"
 #include "Actor/Weapon/Weapon.h"
 #include "Character/CharacterAnimInstance.h"
 #include "Character/PlayerCharacter.h"
@@ -11,6 +13,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Player/CharacterPlayerController.h"
 #include "TimerManager.h"
+#include "Actor/Weapon/AttachmentComponent.h"
 #include "Actor/Weapon/MeleeWeapon.h"
 #include "Actor/Weapon/RangeWeapon.h"
 #include "Components/BoxComponent.h"
@@ -367,6 +370,44 @@ void UCombatComponent::EquipWeapon(AWeapon*  WeaponToEquip)
 	
 	PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
 	PlayerCharacter->bUseControllerRotationYaw = true;
+}
+
+AWeapon* UCombatComponent::SetupAttachments(TSubclassOf<AWeapon> WeaponToSetup, TMap<EAttachmentType, FAttachmentData> Attachments)
+{
+	if(IsValid(WeaponToSetup))
+	{
+		FActorSpawnParameters SpawnParams;
+		AWeapon* Weapon = GetWorld()->SpawnActor<AWeapon>(
+			WeaponToSetup,
+			FVector::ZeroVector,
+			FRotator::ZeroRotator,
+			SpawnParams
+		);
+		if(Weapon && Weapon->GetWeaponMesh())
+		{
+			for (TTuple<EAttachmentType, FAttachmentData> Attachment : Attachments)
+			{
+				FTransform SocketTransform = Weapon->GetWeaponMesh()->GetSocketTransform(Attachment.Value.AttachmentSocketName);
+				UActorComponent* ActorComponent = Weapon->AddComponentByClass(Attachment.Value.AttachmentComponentClass, false, SocketTransform, false);
+				Weapon->AttachmentMap.Add(Attachment.Key, Cast<UAttachmentComponent>(ActorComponent));
+			}
+		}
+		return Weapon;
+	}
+	return nullptr;
+}
+
+void UCombatComponent::UpdateAttachments(TMap<EAttachmentType, FAttachmentData> Attachments)
+{
+	if(EquippedWeapon)
+	{
+			TArray<UAttachmentComponent*> EquippedWeaponAttachments;
+        	EquippedWeapon->GetComponents(UAttachmentComponent::StaticClass(), EquippedWeaponAttachments);
+        	for (UAttachmentComponent* Attachment : EquippedWeaponAttachments)
+        	{
+        		GEngine->AddOnScreenDebugMessage(123, 15.f, FColor::Magenta, FString::Printf(TEXT("Attachment: %s"), *Attachment->GetName()));
+        	}
+	}
 }
 
 void UCombatComponent::UnequipWeapon(AWeapon* WeaponToUnequip)

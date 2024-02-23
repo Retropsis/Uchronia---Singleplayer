@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AttachmentComponent.h"
 #include "WeaponData.h"
 #include "GameFramework/Actor.h"
 #include "AmmoContainer.generated.h"
@@ -10,7 +11,7 @@
 class AProjectile;
 
 UCLASS()
-class UCHRONIA_API UAmmoContainer : public USkeletalMeshComponent
+class UCHRONIA_API UAmmoContainer : public UAttachmentComponent
 {
 	GENERATED_BODY()
 	
@@ -26,7 +27,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Container Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Attachment Component|Ammunition Properties")
 	FDataTableRowHandle AmmunitionDataRow;
 	
 	FName ContainerSocketName;

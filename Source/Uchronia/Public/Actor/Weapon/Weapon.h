@@ -10,6 +10,7 @@
 #include "GameFramework/Actor.h"
 #include "Weapon.generated.h"
 
+class UAttachmentComponent;
 class UGameplayEffect;
 class AProjectile;
 class ACharacterPlayerController;
@@ -49,8 +50,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
 	FDataTableRowHandle WeaponDataRow;
 
-	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
 	TArray<FAttachmentData> Attachments;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
+	TMap<EAttachmentType, UAttachmentComponent*> AttachmentMap;
 
 	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties")
 	EAmmunitionType AmmunitionType;
@@ -58,7 +62,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Weapon Properties")
 	EAmmoContainerType AmmoContainerType;
 	
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon Properties")
 	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
 	
 	UPROPERTY()

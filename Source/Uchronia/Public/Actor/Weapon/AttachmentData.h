@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "AttachmentData.generated.h"
 
+class UAttachmentComponent;
+
 UENUM(BlueprintType)
 enum class EAttachmentType : uint8
 {
@@ -18,6 +20,21 @@ enum class EAttachmentType : uint8
 };
 
 USTRUCT()
+struct FAttachmentSlotData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float TileSize = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	EAttachmentType AttachmentType = EAttachmentType::EAT_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UObject> AttachedObject = nullptr;
+};
+	
+USTRUCT()
 struct FAttachmentData : public FTableRowBase
 {
 	GENERATED_BODY()
@@ -30,6 +47,9 @@ struct FAttachmentData : public FTableRowBase
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FName AttachmentSocketName = FName();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UAttachmentComponent> AttachmentComponentClass;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UStaticMesh> AttachmentMesh = nullptr;

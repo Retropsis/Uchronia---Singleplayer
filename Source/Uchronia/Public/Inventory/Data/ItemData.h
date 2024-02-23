@@ -6,6 +6,7 @@
 #include "Engine/DataTable.h"
 #include "ItemData.generated.h"
 
+class UAttachmentComponent;
 class AWeapon;
 
 UENUM(BlueprintType)
@@ -123,6 +124,7 @@ struct FItemAssetData
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<USoundBase> PickupSound = nullptr;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<AWeapon> Weapon = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<UAttachmentComponent> AttachmentComponent = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TMap<EAttachmentType, FAttachmentData> AttachmentMap;
 };
 

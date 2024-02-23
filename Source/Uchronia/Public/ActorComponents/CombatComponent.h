@@ -3,12 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Actor/Weapon/AttachmentData.h"
 #include "Actor/Weapon/WeaponData.h"
 #include "Components/ActorComponent.h"
 #include "HUD/PlayerHUD.h"
 #include "Types/CombatState.h"
 #include "CombatComponent.generated.h"
 
+class UAttachmentComponent;
 class AMeleeWeapon;
 class ARangeWeapon;
 class APlayerHUD;
@@ -32,6 +34,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void EquipWeapon(AWeapon* WeaponToEquip);
+	
+	UFUNCTION(BlueprintCallable)
+	AWeapon* SetupAttachments(TSubclassOf<AWeapon> WeaponToSetup, TMap<EAttachmentType, FAttachmentData> Attachments);
+	
+	UFUNCTION(BlueprintCallable)
+	void UpdateAttachments(TMap<EAttachmentType, FAttachmentData> Attachments);
 	
 	UFUNCTION(BlueprintCallable)
 	void UnequipWeapon(AWeapon* WeaponToUnequip);
