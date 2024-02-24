@@ -17,6 +17,7 @@
 #include "Actor/Weapon/MeleeWeapon.h"
 #include "Actor/Weapon/RangeWeapon.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 UCombatComponent::UCombatComponent()
 {
@@ -388,8 +389,11 @@ AWeapon* UCombatComponent::SetupAttachments(TSubclassOf<AWeapon> WeaponToSetup, 
 			for (TTuple<EAttachmentType, FAttachmentData> Attachment : Attachments)
 			{
 				FTransform SocketTransform = Weapon->GetWeaponMesh()->GetSocketTransform(Attachment.Value.AttachmentSocketName);
-				UActorComponent* ActorComponent = Weapon->AddComponentByClass(Attachment.Value.AttachmentComponentClass, false, SocketTransform, false);
-				Weapon->AttachmentMap.Add(Attachment.Key, Cast<UAttachmentComponent>(ActorComponent));
+				if (UAttachmentComponent* AttachmentComponent = Cast<UAttachmentComponent>(Weapon->AddComponentByClass(Attachment.Value.AttachmentComponentClass, false, SocketTransform, false)))
+				{
+					AttachmentComponent->AttachmentType = Attachment.Key;
+                    Weapon->AttachmentMap.Add(Attachment.Key, AttachmentComponent);
+				}
 			}
 		}
 		return Weapon;
@@ -397,9 +401,42 @@ AWeapon* UCombatComponent::SetupAttachments(TSubclassOf<AWeapon> WeaponToSetup, 
 	return nullptr;
 }
 
+FAttachmentData UCombatComponent::UpdateAttachment(const EAttachmentType AttachmentType, FAttachmentData NewAttachment)
+{
+	FAttachmentData RemovedAttachment = FAttachmentData();
+	if(IsValid(EquippedWeapon))
+	{
+		// Remove first old attachment if any
+		TArray<UAttachmentComponent*> EquippedWeaponAttachments;
+		EquippedWeapon->GetComponents(UAttachmentComponent::StaticClass(), EquippedWeaponAttachments);
+		for (UAttachmentComponent* Attachment : EquippedWeaponAttachments)
+		{
+			if (Attachment->AttachmentType == AttachmentType)
+			{
+				RemovedAttachment.AttachmentComponentClass = Attachment->StaticClass();
+				RemovedAttachment.AttachmentType = Attachment->AttachmentType;
+				Attachment->DestroyComponent(false);
+			}
+		}
+		// Add the new attachment
+		if(IsValid(NewAttachment.AttachmentComponentClass))
+		{
+			const FTransform SocketTransform = UKismetMathLibrary::InvertTransform(EquippedWeapon->GetWeaponMesh()->GetSocketTransform(NewAttachment.AttachmentSocketName));
+			if (UAttachmentComponent* AttachmentComponent = Cast<UAttachmentComponent>(EquippedWeapon->AddComponentByClass(NewAttachment.AttachmentComponentClass, false, FTransform(), false)))
+			{
+				AttachmentComponent->AttachmentType = AttachmentType;
+				// UKismetSystemLibrary::DrawDebugSphere(this, SocketTransform.GetLocation(), 50.f, 12, FLinearColor::Green, 15.f);
+				// UKismetSystemLibrary::DrawDebugSphere(this, AttachmentComponent->GetComponentLocation(), 5000.f, 12, FLinearColor::White, 15.f);
+				EquippedWeapon->AttachmentMap.Add(AttachmentType, AttachmentComponent);
+			}
+		}
+	}
+	return RemovedAttachment;
+}
+
 void UCombatComponent::UpdateAttachments(TMap<EAttachmentType, FAttachmentData> Attachments)
 {
-	if(EquippedWeapon)
+	if(IsValid(EquippedWeapon))
 	{
 			TArray<UAttachmentComponent*> EquippedWeaponAttachments;
         	EquippedWeapon->GetComponents(UAttachmentComponent::StaticClass(), EquippedWeaponAttachments);

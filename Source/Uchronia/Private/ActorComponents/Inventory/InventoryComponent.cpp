@@ -337,7 +337,7 @@ void UInventoryComponent::TryEquipItem()
 
 void UInventoryComponent::TryEquipWeapon(UItemBase* ItemToEquip)
 {
-	if(AWeapon* WeaponToEquip = Cast<AWeapon>(ItemToEquip->AssetData.Weapon))
+	if(AWeapon* WeaponToEquip = Cast<AWeapon>(ItemToEquip->AssetData.WeaponClass))
 	{
 		PlayerCharacter->GetCombatComponent()->EquipWeapon(WeaponToEquip);
 	}

@@ -41,8 +41,8 @@ public:
 	float JumpModifier = 1.f;
 	float MarksmanModifier = 1.f;
 
-	UPROPERTY()
-	TObjectPtr<UAmmoContainer> AmmunitionContainer;
+	// UPROPERTY()
+	// TObjectPtr<UAmmoContainer> AmmunitionContainer;
 	
 	FName AmmunitionContainerSocket;
 	

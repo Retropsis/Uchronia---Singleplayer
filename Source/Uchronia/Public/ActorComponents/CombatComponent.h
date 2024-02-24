@@ -39,6 +39,9 @@ public:
 	AWeapon* SetupAttachments(TSubclassOf<AWeapon> WeaponToSetup, TMap<EAttachmentType, FAttachmentData> Attachments);
 	
 	UFUNCTION(BlueprintCallable)
+	FAttachmentData UpdateAttachment(EAttachmentType AttachmentType, FAttachmentData NewAttachment);
+	
+	UFUNCTION(BlueprintCallable)
 	void UpdateAttachments(TMap<EAttachmentType, FAttachmentData> Attachments);
 	
 	UFUNCTION(BlueprintCallable)

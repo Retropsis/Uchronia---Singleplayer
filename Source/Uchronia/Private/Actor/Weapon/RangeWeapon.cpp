@@ -11,9 +11,9 @@
 
 ARangeWeapon::ARangeWeapon()
 {
-	AmmoContainer = CreateDefaultSubobject<UAmmoContainer>(TEXT("AmmoContainer"));
-	AmmoContainer->SetupAttachment(WeaponMesh);
-	AmmoContainer->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	// AmmoContainer = CreateDefaultSubobject<UAmmoContainer>(TEXT("AmmoContainer"));
+	// AmmoContainer->SetupAttachment(WeaponMesh);
+	// AmmoContainer->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	// const USkeletalMeshSocket* ClipSocket =WeaponMesh->GetSocketByName(FName("ClipSocket"));
 	// if(ClipSocket)

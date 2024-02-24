@@ -116,16 +116,18 @@ struct FItemAssetData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UTexture2D> Icon = nullptr;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UMaterialInterface> SpatialIcon = nullptr;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UMaterialInterface> SpatialIconRotated = nullptr;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UStaticMesh> Mesh = nullptr;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<USkeletalMesh> ItemSkeletalMesh = nullptr;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<USoundBase> PickupSound = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item") TObjectPtr<UTexture2D> Icon = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item") TObjectPtr<UMaterialInterface> SpatialIcon = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item") TObjectPtr<UMaterialInterface> SpatialIconRotated = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item") TObjectPtr<UStaticMesh> Mesh = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item") TObjectPtr<USkeletalMesh> ItemSkeletalMesh = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item") TObjectPtr<USoundBase> PickupSound = nullptr;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<AWeapon> Weapon = nullptr;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) TSubclassOf<UAttachmentComponent> AttachmentComponent = nullptr;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) TMap<EAttachmentType, FAttachmentData> AttachmentMap;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon") TSubclassOf<AWeapon> WeaponClass = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon") TMap<EAttachmentType, FAttachmentData> WeaponAttachmentsMap;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attachment") TSubclassOf<UAttachmentComponent> AttachmentComponentClass = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attachment") FAttachmentData AttachmentComponentData;
 };
 
 USTRUCT(BlueprintType)

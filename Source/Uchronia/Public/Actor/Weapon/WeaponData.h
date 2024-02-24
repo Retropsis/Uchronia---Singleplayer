@@ -74,7 +74,8 @@ struct FWeaponAssetData
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<UAnimationAsset> FireAnimation = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) bool bUsePhysicsAsset = false;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FName PhysicsBoneName = FName();
-	
+
+	// TODO: Probably not needed like this anymore
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) TObjectPtr<USkeletalMeshComponent> AmmunitionContainer = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FName AmmunitionContainerSocket = FName();
 };
