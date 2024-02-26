@@ -1,8 +1,6 @@
 // Retropsis @ 2023-2024
 
 #include "ActorComponents/CombatComponent.h"
-
-#include "K2Node_AddComponentByClass.h"
 #include "Actor/Weapon/Weapon.h"
 #include "Character/CharacterAnimInstance.h"
 #include "Character/PlayerCharacter.h"
@@ -373,6 +371,11 @@ void UCombatComponent::EquipWeapon(AWeapon*  WeaponToEquip)
 	PlayerCharacter->bUseControllerRotationYaw = true;
 }
 
+void UCombatComponent::InitializeWeapon(AWeapon* WeaponToInitialize)
+{
+	WeaponToInitialize.SetAmm =
+}
+
 AWeapon* UCombatComponent::SetupAttachments(TSubclassOf<AWeapon> WeaponToSetup, TMap<EAttachmentType, FAttachmentData> Attachments)
 {
 	if(IsValid(WeaponToSetup))
@@ -392,6 +395,7 @@ AWeapon* UCombatComponent::SetupAttachments(TSubclassOf<AWeapon> WeaponToSetup, 
 				if (UAttachmentComponent* AttachmentComponent = Cast<UAttachmentComponent>(Weapon->AddComponentByClass(Attachment.Value.AttachmentComponentClass, false, SocketTransform, false)))
 				{
 					AttachmentComponent->AttachmentType = Attachment.Key;
+					AttachmentComponent->InitializeAttachment(Attachment.Value.AttachmentInitializationData);
                     Weapon->AttachmentMap.Add(Attachment.Key, AttachmentComponent);
 				}
 			}
@@ -425,8 +429,7 @@ FAttachmentData UCombatComponent::UpdateAttachment(const EAttachmentType Attachm
 			if (UAttachmentComponent* AttachmentComponent = Cast<UAttachmentComponent>(EquippedWeapon->AddComponentByClass(NewAttachment.AttachmentComponentClass, false, FTransform(), false)))
 			{
 				AttachmentComponent->AttachmentType = AttachmentType;
-				// UKismetSystemLibrary::DrawDebugSphere(this, SocketTransform.GetLocation(), 50.f, 12, FLinearColor::Green, 15.f);
-				// UKismetSystemLibrary::DrawDebugSphere(this, AttachmentComponent->GetComponentLocation(), 5000.f, 12, FLinearColor::White, 15.f);
+				AttachmentComponent->InitializeAttachment(NewAttachment.AttachmentInitializationData);
 				EquippedWeapon->AttachmentMap.Add(AttachmentType, AttachmentComponent);
 			}
 		}

@@ -30,6 +30,13 @@ void UAmmoContainer::InitializeComponent()
 	}
 }
 
+void UAmmoContainer::InitializeAttachment(FAttachmentInitializationData InitializationData)
+{
+	Super::InitializeAttachment(InitializationData);
+	CurrentCount = InitializationData.CurrentCount;
+	MaxCapacity = InitializationData.MaxCapacity;
+}
+
 void UAmmoContainer::BeginPlay()
 {
 	Super::BeginPlay();
@@ -40,9 +47,16 @@ bool UAmmoContainer::UseAvailableRound()
 	if(CurrentCount >= 1)
 	{
 		CurrentCount--;
+		GEngine->AddOnScreenDebugMessage(133, 8.f, FColor::Yellow, FString::Printf(TEXT("Ammo left: %d"), CurrentCount));
 		return true;
 	}
+	GEngine->AddOnScreenDebugMessage(133, 8.f, FColor::Red, FString::Printf(TEXT("Out of ammo")));
 	return false;
+}
+
+int32 UAmmoContainer::GetCurrentCount()
+{
+	return CurrentCount;
 }
 
 void UAmmoContainer::SetCount(int32 NewCount)

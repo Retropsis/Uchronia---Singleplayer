@@ -16,6 +16,8 @@ class UCHRONIA_API UAttachmentComponent : public USkeletalMeshComponent
 	GENERATED_BODY()
 
 public:
+	virtual void InitializeAttachment(FAttachmentInitializationData InitializationData) {};
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attachment Component")
 	EAttachmentType AttachmentType = EAttachmentType::EAT_None;
 

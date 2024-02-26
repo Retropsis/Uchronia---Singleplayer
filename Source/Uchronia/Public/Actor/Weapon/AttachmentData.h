@@ -33,8 +33,20 @@ struct FAttachmentSlotData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UObject> AttachedObject = nullptr;
 };
-	
+
 USTRUCT()
+struct FAttachmentInitializationData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 CurrentCount = 0;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 MaxCapacity = 0;
+};
+
+USTRUCT(BlueprintType)
 struct FAttachmentData : public FTableRowBase
 {
 	GENERATED_BODY()
@@ -56,4 +68,7 @@ struct FAttachmentData : public FTableRowBase
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UMaterialInterface> AttachmentIcon = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FAttachmentInitializationData AttachmentInitializationData = FAttachmentInitializationData();
 };

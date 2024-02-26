@@ -18,8 +18,10 @@ class UCHRONIA_API UAmmoContainer : public UAttachmentComponent
 public:	
 	UAmmoContainer();
 	virtual void InitializeComponent() override;
+	virtual void InitializeAttachment(FAttachmentInitializationData InitializationData) override;
 
 	bool UseAvailableRound();
+	int32 GetCurrentCount();
 	void SetCount(int32 NewCount);
 	void AdjustCount(int32 Amount);
 	void PlayEmptyContainerSound();
@@ -46,7 +48,6 @@ private:
 
 public:	
 	FORCEINLINE TSubclassOf<AProjectile> GetProjectileClass() const { return ProjectileClass; }
-	FORCEINLINE int32 GetCurrentCount() const { return CurrentCount; }
 	FORCEINLINE int32 GetMaxCapacity() const { return MaxCapacity; }
 	FORCEINLINE bool IsContainerFull() const { return CurrentCount == MaxCapacity; }
 	FORCEINLINE bool IsContainerEmpty() const { return MaxCapacity <= 0; }

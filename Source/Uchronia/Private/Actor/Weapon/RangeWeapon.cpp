@@ -87,6 +87,42 @@ void ARangeWeapon::SpendRound()
 {
 	Ammo = FMath::Clamp(Ammo - 1, 0, MagCapacity);
 	SetHUDAmmo();
+	
+	if(!AttachmentMap.Contains(EAttachmentType::EAT_Magazine))
+	{
+		GEngine->AddOnScreenDebugMessage(132, 8.f, FColor::Purple, FString::Printf(TEXT("No magazine !")));
+		return;
+	}
+	if (UAttachmentComponent* Component =  *AttachmentMap.Find(EAttachmentType::EAT_Magazine))
+	{
+		if (UAmmoContainer* Magazine = Cast<UAmmoContainer>(Component))
+		{
+			Magazine->UseAvailableRound();
+			GEngine->AddOnScreenDebugMessage(132, 8.f, FColor::Purple, FString::Printf(TEXT("Ammo Left: %d"), Magazine->GetCurrentCount()));
+		}
+	}
+}
+
+bool ARangeWeapon::HasAmmo()
+{
+	if(AmmoContainerType == EAmmoContainerType::EACT_Internal)
+	{
+		GEngine->AddOnScreenDebugMessage(132, 8.f, FColor::Purple, FString::Printf(TEXT("Internal Count: %d"), Ammo));
+		return Ammo > 0;
+	}
+	if(!AttachmentMap.Contains(EAttachmentType::EAT_Magazine))
+	{
+		GEngine->AddOnScreenDebugMessage(132, 8.f, FColor::Purple, FString::Printf(TEXT("No magazine !")));
+		return false;
+	}
+	if (UAttachmentComponent* Component =  *AttachmentMap.Find(EAttachmentType::EAT_Magazine))
+	{
+		if (UAmmoContainer* Magazine = Cast<UAmmoContainer>(Component))
+		{
+			GEngine->AddOnScreenDebugMessage(132, 8.f, FColor::Purple, FString::Printf(TEXT("Ammo Left: %d"), Magazine->GetCurrentCount()));
+		}
+	}
+	return Ammo > 0;
 }
 
 void ARangeWeapon::AddRounds(const int32 RoundsToAdd)

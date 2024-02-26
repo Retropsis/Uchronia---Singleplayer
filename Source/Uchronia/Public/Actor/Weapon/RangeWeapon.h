@@ -83,7 +83,7 @@ public:
 	FORCEINLINE UAmmoContainer* GetAmmoContainer() const { return AmmoContainer; }
 	FORCEINLINE float GetMarksmanFOV() const { return MarksmanFOV; }
 	FORCEINLINE float GetMarksmanInterpSpeed() const { return MarksmanInterpSpeed; }
-	FORCEINLINE bool HasAmmo() const { return Ammo > 0; }
+	bool HasAmmo();
 	FORCEINLINE bool IsFull() const { return Ammo == MagCapacity; }
 	FORCEINLINE int32 GetAmmo() const { return Ammo; } 
 	FORCEINLINE int32 GetMagCapacity() const { return MagCapacity; } 
