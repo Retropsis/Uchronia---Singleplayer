@@ -18,10 +18,10 @@ class UCHRONIA_API UHullComponentCore : public USkeletalMeshComponent
 public:
 	UHullComponentCore();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|HardPoints")
-	TObjectPtr<UHardPointTraceComponent> HardPointTrace;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|HardPoints")
-	TObjectPtr<USceneComponent> SmokeSpawnLocation;
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|HardPoints")
+	// TObjectPtr<UHardPointTraceComponent> HardPointTrace;
+	//
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|HardPoints")
+	// TObjectPtr<USceneComponent> SmokeSpawnLocation;
 	
 };

@@ -36,7 +36,7 @@ public:
 	void EquipWeapon(AWeapon* WeaponToEquip);
 
 	UFUNCTION(BlueprintCallable)
-	void InitializeWeapon();
+	void InitializeWeapon(AWeapon* WeaponToInitialize);
 	
 	UFUNCTION(BlueprintCallable)
 	AWeapon* SetupAttachments(TSubclassOf<AWeapon> WeaponToSetup, TMap<EAttachmentType, FAttachmentData> Attachments);

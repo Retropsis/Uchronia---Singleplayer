@@ -373,7 +373,6 @@ void UCombatComponent::EquipWeapon(AWeapon*  WeaponToEquip)
 
 void UCombatComponent::InitializeWeapon(AWeapon* WeaponToInitialize)
 {
-	WeaponToInitialize.SetAmm =
 }
 
 AWeapon* UCombatComponent::SetupAttachments(TSubclassOf<AWeapon> WeaponToSetup, TMap<EAttachmentType, FAttachmentData> Attachments)

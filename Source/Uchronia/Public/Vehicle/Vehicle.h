@@ -3,39 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "VehicleData.h"
 #include "GameFramework/Pawn.h"
 #include "Vehicle.generated.h"
 
 class UCameraComponent;
 class USpringArmComponent;
 class UHullComponentCore;
-class AHelm;
-class UBoxComponent;
 
-UENUM(BlueprintType)
-enum class ESeatType : uint8
-{
-	EST_Driver UMETA(DisplayName="Driver"),
-	EST_Passenger_1 UMETA(DisplayName="Passenger_1"),
-	EST_Passenger_2 UMETA(DisplayName="Passenger_2"),
-	EST_Passenger_3 UMETA(DisplayName="Passenger_3"),
-	EST_Passenger_4 UMETA(DisplayName="Passenger_4"),
-	EST_MAX UMETA(DisplayName="DefaultMAX")
-};
-
-UENUM(BlueprintType)
-enum class EGears : uint8
-{
-	EST_R UMETA(DisplayName="Reverse"),
-	EST_N UMETA(DisplayName="Neutral"),
-	EST_1 UMETA(DisplayName="1"),
-	EST_2 UMETA(DisplayName="2"),
-	EST_3 UMETA(DisplayName="3"),
-	EST_4 UMETA(DisplayName="4"),
-	EST_5 UMETA(DisplayName="5"),
-	EST_6 UMETA(DisplayName="6"),
-	EG_MAX UMETA(DisplayName="DefaultMAX")
-};
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGearChange, EGears, CurrentGear);
 
 UCLASS()
 class UCHRONIA_API AVehicle : public APawn
@@ -45,18 +21,48 @@ class UCHRONIA_API AVehicle : public APawn
 public:
 	AVehicle();
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(BlueprintAssignable, Category="Vehicle|Core")
+	FOnGearChange OnGearChangeDelegate;
+	
+	UFUNCTION(BlueprintCallable)
+	void SetNewGear(const EGears NewGear);
+	
+	UFUNCTION(BlueprintCallable)
+	EGears GetCurrentGear() const { return CurrentGear; };
+	
+	UFUNCTION(BlueprintCallable)
+	void IncreaseGear();
+	
+	UFUNCTION(BlueprintCallable)
+	void DecreaseGear();
+
+	UFUNCTION(BlueprintCallable)
+	void SetThrustSpeedByGear(EGears InCurrentGear);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Core")
 	TObjectPtr<UHullComponentCore> HullMesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Core")
+	float TargetThrustSpeed = 0.f;
+	
 protected:
 	virtual void BeginPlay() override;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Player")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Camera")
 	TObjectPtr<USpringArmComponent> SpringArm;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Player")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Camera")
 	TObjectPtr<UCameraComponent> FollowCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Camera")
+	float DefaultArmLength = 0.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Camera")
+	float FirstPersonArmLength = -80.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Core")
+	EGears CurrentGear = EGears::EST_N;
 
 private:
 

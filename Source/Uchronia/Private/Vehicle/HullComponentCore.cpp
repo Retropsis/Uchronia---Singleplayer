@@ -6,10 +6,10 @@
 
 UHullComponentCore::UHullComponentCore()
 {
-	HardPointTrace = CreateDefaultSubobject<UHardPointTraceComponent>(TEXT("HardPointTrace"));
+	// HardPointTrace = CreateDefaultSubobject<UHardPointTraceComponent>(TEXT("HardPointTrace"));
 	// HardPointTrace->SetupAttachment(this);
-	HardPointTrace->HardPointComponent = this;
+	// HardPointTrace->HardPointComponent = this;
 
-	SmokeSpawnLocation = CreateDefaultSubobject<USceneComponent>(TEXT("SmokeSpawnLocation"));
+	// SmokeSpawnLocation = CreateDefaultSubobject<USceneComponent>(TEXT("SmokeSpawnLocation"));
 	// SmokeSpawnLocation->SetupAttachment(this);
 }
