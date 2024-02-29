@@ -160,6 +160,34 @@ void ABaseCharacter::SetSwimmingState_Implementation(bool bShouldSwim)
 }
 
 /*
+ * Collisions Utility
+ */
+void ABaseCharacter::ToggleCollisions(bool bEnabled)
+{
+	if(bEnabled)
+	{
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		GetCharacterMovement()->GravityScale = 1.5f;
+	}
+	else
+	{
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GetCharacterMovement()->DisableMovement();
+	}
+}
+
+void ABaseCharacter::MulticastToggleCollisions_Implementation(bool bEnabled)
+{
+	ToggleCollisions(bEnabled);
+}
+
+void ABaseCharacter::ClientToggleCollisions_Implementation(bool bEnabled)
+{
+	ToggleCollisions(bEnabled);
+}
+
+/*
  * Dissolve
  */
 void ABaseCharacter::Dissolve()

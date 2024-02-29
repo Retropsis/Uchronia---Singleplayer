@@ -7,6 +7,7 @@
 #include "Actor/Weapon/RangeWeapon.h"
 #include "Actor/Weapon/Weapon.h"
 #include "ActorComponents/CombatComponent.h"
+#include "ActorComponents/VehicleComponent.h"
 #include "ActorComponents/Inventory/InventoryComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Character/CharacterAnimInstance.h"
@@ -45,6 +46,9 @@ APlayerCharacter::APlayerCharacter()
 	//~ Components
 	CombatComponent = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
 	CombatComponent->SetIsReplicated(true);
+
+	VehicleComponent = CreateDefaultSubobject<UVehicleComponent>(TEXT("VehicleComponent"));
+	VehicleComponent->SetIsReplicated(true); // TODO: Investigate if i need this
 
 	PlayerInventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("PlayerInventory"));
 	PlayerInventory->PlayerCharacter = this;

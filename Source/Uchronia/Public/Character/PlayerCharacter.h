@@ -12,6 +12,7 @@
 #include "World/Item.h"
 #include "PlayerCharacter.generated.h"
 
+class UVehicleComponent;
 struct FItemStruct;
 class APickup;
 class UItemBase;
@@ -95,17 +96,20 @@ protected:
 	UPROPERTY()
 	TObjectPtr<APlayerHUD> PlayerHUD;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Character Properties|Vehicle")
+	TObjectPtr<UVehicleComponent> VehicleComponent;
+	
 	// TODO: Could be somewhere else like WidgetController
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> OverheadWidget;
 
-	UPROPERTY(VisibleAnywhere, Category="Character Properties | Inventory")
+	UPROPERTY(VisibleAnywhere, Category="Character Properties|Inventory")
 	TObjectPtr<UInventoryComponent> PlayerInventory;
 
 	/*
 	 * Interaction
 	 */
-	UPROPERTY(ReplicatedUsing=OnRep_TargetInteractable, VisibleAnywhere, Category="Character Properties | Interaction");
+	UPROPERTY(ReplicatedUsing=OnRep_TargetInteractable, VisibleAnywhere, Category="Character Properties|Interaction");
 	TScriptInterface<IInteractionInterface> TargetInteractable;
 
 	UFUNCTION()
@@ -196,6 +200,7 @@ public:
 	// void SetOverlappingWeapon(AWeapon* Weapon);
 	ARangeWeapon* GetEquippedWeapon();
 	FORCEINLINE UCombatComponent* GetCombatComponent() const { return CombatComponent; };
+	FORCEINLINE UVehicleComponent* GetVehicleComponent() const { return VehicleComponent; };
 	FORCEINLINE UInventoryComponent* GetInventoryComponent() const { return PlayerInventory; };
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	bool IsWeaponEquipped() const;

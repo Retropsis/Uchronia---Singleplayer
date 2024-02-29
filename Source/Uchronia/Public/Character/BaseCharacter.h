@@ -47,6 +47,14 @@ public:
 	virtual void SetSwimmingState_Implementation(bool bShouldSwim) override;
 	//~Swimming Interface
 
+	void ToggleCollisions(bool bEnabled);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastToggleCollisions(bool bEnabled);
+	
+	UFUNCTION(Client, Reliable)
+	void ClientToggleCollisions(bool bEnabled);
+
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
 	

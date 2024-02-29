@@ -6,6 +6,7 @@
 UENUM(BlueprintType)
 enum class ESeatType : uint8
 {
+	EST_None UMETA(DisplayName="None"),
 	EST_Driver UMETA(DisplayName="Driver"),
 	EST_Passenger_1 UMETA(DisplayName="Passenger_1"),
 	EST_Passenger_2 UMETA(DisplayName="Passenger_2"),

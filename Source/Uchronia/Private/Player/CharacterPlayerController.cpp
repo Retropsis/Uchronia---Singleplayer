@@ -17,11 +17,40 @@ ACharacterPlayerController::ACharacterPlayerController()
 void ACharacterPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	check(CharacterContext);
+	TryAddingMappingContext(CharacterContext);
+}
+
+void ACharacterPlayerController::TryAddingMappingContext(const UInputMappingContext* NewContext)
+{
+	checkf(NewContext, TEXT("Missing Mapping Context, check CharacterPlayerController or VehicleComponent"));
 
 	if(UEnhancedInputLocalPlayerSubsystem*  Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
-		Subsystem->AddMappingContext(CharacterContext, 0);
+		Subsystem->AddMappingContext(NewContext, 0);
+	}
+}
+
+void ACharacterPlayerController::RemoveMappingContext(const UInputMappingContext* Context)
+{
+	if(UEnhancedInputLocalPlayerSubsystem*  Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		Subsystem->RemoveMappingContext(Context);
+	}
+}
+
+void ACharacterPlayerController::EnableCharacterContext(const bool bEnabled)
+{
+	checkf(CharacterContext, TEXT("Missing CharacterMappingContext, check CharacterPlayerController"));
+	if(UEnhancedInputLocalPlayerSubsystem*  Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		if(bEnabled)
+		{
+			Subsystem->AddMappingContext(CharacterContext, 0);
+		}
+		else
+		{
+			Subsystem->RemoveMappingContext(CharacterContext);
+		}
 	}
 }
 

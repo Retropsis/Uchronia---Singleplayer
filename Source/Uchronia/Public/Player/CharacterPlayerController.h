@@ -27,6 +27,9 @@ public:
 	ACharacterPlayerController();
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
+	void TryAddingMappingContext(const UInputMappingContext* NewContext);
+	void RemoveMappingContext(const UInputMappingContext* Context);
+	void EnableCharacterContext(bool bEnabled);
 
 	void ToggleMenu();
 
