@@ -36,13 +36,15 @@ enum class EItemCondition : uint8
 	EIC_Ruined UMETA(DisplayName="Ruined")
 };
 
+// Functionality inside the inventory grid, can they equip, do they attach, can they consume, does it hold more inside
 UENUM(BlueprintType)
 enum class EItemType : uint8
 {
 	EIT_Weapon UMETA(DisplayName="Weapon"),
 	EIT_Armor UMETA(DisplayName="Armor"),
 	EIT_Ammunition UMETA(DisplayName="Ammunition"),
-	EIT_AmmoContainer UMETA(DisplayName="Ammo Container"),
+	EIT_Container UMETA(DisplayName="Container"),
+	EIT_Attachment UMETA(DisplayName="Attachment"),
 	EIT_Consumable UMETA(DisplayName="Consumable"),
 	EIT_Material UMETA(DisplayName="Material"),
 	EIT_Misc UMETA(DisplayName="Misc"),

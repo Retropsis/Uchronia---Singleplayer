@@ -10,6 +10,8 @@
 #include "Input/PlayerInputComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Vehicle/HullComponentCore.h"
+#include "Vehicle/SkimmerMovement.h"
+#include "Vehicle/VehicleCore.h"
 
 AVehicle::AVehicle()
 {
@@ -21,6 +23,9 @@ AVehicle::AVehicle()
 
 	HullMesh = CreateDefaultSubobject<UHullComponentCore>(TEXT("HullMesh"));
 	SetRootComponent(HullMesh);
+
+	// VehicleCore = CreateDefaultSubobject<UVehicleCore>(TEXT("VehicleCore"));
+	// SkimmerMovementComponent = CreateDefaultSubobject<USkimmerMovement>(TEXT("SkimmerMovementComponent"));
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
@@ -232,7 +237,7 @@ void AVehicle::ServerExitVehicle()
 	if(DriverCharacter && DriverCharacter->GetVehicleComponent())
 	{
 		GetController()->Possess(DriverCharacter);
-		DriverCharacter->GetVehicleComponent()->ServerExitVehicle();
 		DriverCharacter->GetVehicleComponent()->ExitVehicle();
+		DriverCharacter->GetVehicleComponent()->ServerExitVehicle();
 	}
 }

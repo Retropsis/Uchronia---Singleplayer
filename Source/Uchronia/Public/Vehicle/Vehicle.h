@@ -9,6 +9,8 @@
 #include "Interaction/VehicleInterface.h"
 #include "Vehicle.generated.h"
 
+class USkimmerMovement;
+class UVehicleCore;
 class APlayerCharacter;
 class UInputAction;
 class UInputMappingContext;
@@ -29,6 +31,7 @@ public:
 	virtual ESeatType GetFirstAvailableSeat_Implementation() override;
 	virtual bool IsAnySeatAvailable_Implementation() override;
 	virtual AVehicle* GetOwningVehicle_Implementation() override;
+	// virtual USkimmerMovement* GetSkimmerMovementComponent() const { return SkimmerMovementComponent; }
 
 	// UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void ServerExitVehicle();
@@ -60,11 +63,25 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Core")
 	float TargetThrustSpeed = 0.f;
 
-	
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Core")
+	// TObjectPtr<UVehicleCore> VehicleCore;
+
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Core")
+	// TSubclassOf<UActorComponent> MovementComponentClass;
+
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Core")
+	// TObjectPtr<USkimmerMovement> SkimmerMovementComponent;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Core")
+	EGears CurrentGear = EGears::EST_N;
+	
+	/*
+	 * Camera
+	 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Camera")
 	TObjectPtr<USpringArmComponent> SpringArm;
 
@@ -76,9 +93,6 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Camera")
 	float FirstPersonArmLength = -80.f;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Core")
-	EGears CurrentGear = EGears::EST_N;
 
 	/*
 	 * Input Mapping Context
@@ -126,4 +140,6 @@ private:
 
 public:
 	FORCEINLINE UInputMappingContext* GetVehicleControlsContext() const { return  VehicleControlsContext; }
+	FORCEINLINE UHullComponentCore* GetHullMesh() const { return  HullMesh; }
+	// FORCEINLINE UVehicleCore* GetVehicleCore() const { return  VehicleCore; }
 };

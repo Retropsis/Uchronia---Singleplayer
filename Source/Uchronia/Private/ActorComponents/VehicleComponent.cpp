@@ -128,7 +128,7 @@ void UVehicleComponent::ServerExitVehicle_Implementation()
 	OwningCharacter->MulticastToggleCollisions(true);
 	MulticastDetachPlayerFromSeat();
 	
-	InteractingVehicle->OccupySeat(nullptr, ESeatType::EST_None, false);
+	InteractingVehicle->OccupySeat(nullptr, OccupyingSeat, false);
 	OccupyingSeat = ESeatType::EST_None;
 	
 	UKismetSystemLibrary::MoveComponentTo(
@@ -139,6 +139,8 @@ void UVehicleComponent::ServerExitVehicle_Implementation()
 		false,
 		EMoveComponentAction::Move,
 		FLatentActionInfo());
+	
+		InteractingVehicle = nullptr;
 }
 
 void UVehicleComponent::ExitVehicle()
@@ -148,7 +150,6 @@ void UVehicleComponent::ExitVehicle()
 		PlayerController->EnableCharacterContext(true);
 		PlayerController->RemoveMappingContext(VehicleContext);
 		PlayerController->RemoveMappingContext(InteractingVehicle->GetVehicleControlsContext());
-		InteractingVehicle = nullptr;
 	}
 }
 
