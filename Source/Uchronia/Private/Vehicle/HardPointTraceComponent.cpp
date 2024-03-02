@@ -12,4 +12,12 @@ void UHardPointTraceComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
 	SetCollisionObjectType(ECC_HardPoint);
+	SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SetCollisionResponseToAllChannels(ECR_Overlap);
+	ComponentTags.Add("HardPoint");
+}
+
+void UHardPointTraceComponent::OnComponentCreated()
+{
+	Super::OnComponentCreated();
 }
