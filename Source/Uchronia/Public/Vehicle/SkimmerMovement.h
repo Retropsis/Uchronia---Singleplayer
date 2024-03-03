@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "SkimmerMovement.generated.h"
 
+class UVehicleCore;
 class AVehicle;
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -16,6 +17,9 @@ class UCHRONIA_API USkimmerMovement : public UActorComponent
 public:	
 	USkimmerMovement();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	UFUNCTION(BlueprintCallable) void InitializeSkimmerMovement(UVehicleCore* InVehicleCore);
+	virtual void ToggleWaterSplashes();
+	float GetVehicleElevation();
 
 protected:
 	virtual void BeginPlay() override;
@@ -23,8 +27,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Skimmer Movement")
 	TObjectPtr<APawn> OwningVehicle;
 	
-	UPROPERTY(VisibleAnywhere, Category="Vehicle|Skimmer Movement")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Vehicle|Skimmer Movement")
 	TObjectPtr<UPrimitiveComponent> HullReference;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Vehicle|Skimmer Movement")
+	TObjectPtr<UVehicleCore> VehicleCore;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Skimmer Movement|Properties")
 	float ThrustSpeedFactor = 600.f;
@@ -70,6 +77,23 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Skimmer Movement|Calculation")
 	FVector DeltaLocation = FVector::ZeroVector;
+
+	/*
+	 * VFX
+	 */
+	FTimerHandle WaterSplashTimer;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Skimmer Movement|VFX")
+	float WaterSplashCooldown = 0.5f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Skimmer Movement|VFX")
+	float WaterSplashThreshold = 100.f;
+
+	bool bEnableWaterSplash = false;
+
+private:
+	UFUNCTION()
+	void CallWaterSplash();
 
 public:	
 };
