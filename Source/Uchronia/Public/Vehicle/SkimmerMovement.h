@@ -3,9 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "VehicleData.h"
 #include "Components/ActorComponent.h"
 #include "SkimmerMovement.generated.h"
 
+class UHullComponentCore;
+enum class EGears : uint8;
 class UVehicleCore;
 class AVehicle;
 
@@ -18,20 +21,23 @@ public:
 	USkimmerMovement();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	UFUNCTION(BlueprintCallable) void InitializeSkimmerMovement(UVehicleCore* InVehicleCore);
-	virtual void ToggleWaterSplashes();
-	float GetVehicleElevation();
+	UFUNCTION(BlueprintCallable) void SolveMovement(float DeltaTime);
+	UFUNCTION() void SetThrustSpeedByGear(EGears CurrentGear);
 
 protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Skimmer Movement")
-	TObjectPtr<APawn> OwningVehicle;
+	TObjectPtr<AVehicle> OwningVehicle;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Vehicle|Skimmer Movement")
-	TObjectPtr<UPrimitiveComponent> HullReference;
+	TObjectPtr<UHullComponentCore> HullReference;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Vehicle|Skimmer Movement")
 	TObjectPtr<UVehicleCore> VehicleCore;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Skimmer Movement|Properties")
+	FVector Gravity = FVector(0.f, 0.f, -20.f);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Skimmer Movement|Properties")
 	float ThrustSpeedFactor = 600.f;
@@ -75,25 +81,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Skimmer Movement|Calculation")
 	float CurrentThrustSpeedFactor = 0.f;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Skimmer Movement|Calculation")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Vehicle|Skimmer Movement|Calculation")
 	FVector DeltaLocation = FVector::ZeroVector;
 
-	/*
-	 * VFX
-	 */
-	FTimerHandle WaterSplashTimer;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Skimmer Movement|VFX")
-	float WaterSplashCooldown = 0.5f;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Skimmer Movement|VFX")
-	float WaterSplashThreshold = 100.f;
-
-	bool bEnableWaterSplash = false;
-
 private:
-	UFUNCTION()
-	void CallWaterSplash();
 
 public:	
 };

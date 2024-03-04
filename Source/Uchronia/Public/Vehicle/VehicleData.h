@@ -28,3 +28,15 @@ enum class EGears : uint8
 	EST_6 UMETA(DisplayName="6"),
 	EG_MAX UMETA(DisplayName="DefaultMAX")
 };
+
+UENUM(BlueprintType)
+enum class EMovementState : uint8
+{
+	EMS_None UMETA(DisplayName="None"),
+	EMS_Engine_Off UMETA(DisplayName="Engine_Off"),
+	EMS_Idle UMETA(DisplayName="Idle"),
+	EMS_Moving UMETA(DisplayName="Moving"),
+	EMS_Ease_In UMETA(DisplayName="Ease_In"),
+	EMS_Ease_Out UMETA(DisplayName="Ease_Out"),
+	EMS_MAX UMETA(DisplayName="DefaultMAX")
+};

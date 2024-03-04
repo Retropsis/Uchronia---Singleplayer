@@ -13,23 +13,28 @@
 
 UVehicleCore::UVehicleCore()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UVehicleCore::BeginPlay()
 {
 	Super::BeginPlay();
-	InitializeVehicleCore();
 }
 
 void UVehicleCore::InitializeVehicleCore()
 {
 	OwningVehicle = Cast<AVehicle>(GetOwner());
+	if(IsValid(OwningVehicle))
+	{
+		OwningVehicle->OnGearChangeDelegate.AddDynamic(this, &UVehicleCore::HandleOnGearChanged);
+	}
+	
 	if(const UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().SetTimer(FuelConsumptionTimer, this, &UVehicleCore::UpdateFuelStatus, FuelConsumptionCooldown, true);
 	}
-	OnFuelChangeDelegate.AddDynamic(this, &UVehicleCore::UVehicleCore::UpdateFuelGauges);
+	OnFuelChangeDelegate.AddDynamic(this, &UVehicleCore::UpdateFuelGauges);
+	OnFuelEmptyDelegate.AddDynamic(this, &UVehicleCore::HandleOnFuelEmptied);
 	TArray<FName> SocketNames = OwningVehicle->GetHullMesh()->GetAllSocketNames();
 	for (FName SocketName : SocketNames)
 	{
@@ -43,6 +48,7 @@ void UVehicleCore::InitializeVehicleCore()
 void UVehicleCore::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	ToggleWaterSplashes();
 }
 
 void UVehicleCore::UpdateFuelStatus()
@@ -50,18 +56,40 @@ void UVehicleCore::UpdateFuelStatus()
 	if(!IsValid(FuelComponent)) return;
 	
 	bIsOutOfFuel = UKismetMathLibrary::NearlyEqual_FloatFloat(FuelComponent->GetCurrentFuelQuantity(), 0.f, 0.01);
-	OnFuelChangeDelegate.Broadcast();
-	if(bIsOutOfFuel != bLastIsOutOfFuel)
+	
+	if(ShouldTickFuelConsumption()) // False is Retrieved was Near Zero
 	{
-		OnFuelEmptyDelegate.Broadcast(bIsOutOfFuel ? 0.f : 1.f);
-		bLastIsOutOfFuel = bIsOutOfFuel;
+		ToggleEngines(true);
 	}
+	else
+	{
+		ToggleEngines(false);
+	}
+	
+	if (bIsOutOfFuel /*!ShouldTickFuelConsumption()*/)
+	{
+		if(bIsOutOfFuel != bLastIsOutOfFuel)
+		{
+			OnFuelEmptyDelegate.Broadcast(bIsOutOfFuel ? 0.f : 1.f);
+			bLastIsOutOfFuel = bIsOutOfFuel;
+		}
+		ToggleEngines(false);
+	}
+	else
+	{
+		
+	}
+	OnFuelChangeDelegate.Broadcast();
+}
+
+bool UVehicleCore::ShouldTickFuelConsumption()
+{
+	return TickFuelConsumption(CurrentFuelTickConsumption);
 }
 
 bool UVehicleCore::TickFuelConsumption(const float QueriedAmount)
 {
 	const bool bRetrievedWasNearZero = UKismetMathLibrary::NearlyEqual_FloatFloat(FuelComponent->RetrieveFuel(QueriedAmount), 0.f, 0.01f);
-	UpdateFuelStatus();
 	return !bRetrievedWasNearZero;
 }
 
@@ -84,6 +112,76 @@ void UVehicleCore::ToggleEngines(const bool ShouldActivate)
 		{
 			IEngineInterface::Execute_UpdateEngineTrail(Engine, ShouldActivate);
 		}
+	}
+}
+
+// TODO: Use DataTable to determine each engine power and fuel efficiency
+void UVehicleCore::SetFuelTickConsumptionByGear(const EGears NewGear)
+{
+	switch (NewGear)
+	{
+	case EGears::EST_R:
+		CurrentFuelTickConsumption = EngineCount * 0.01f;
+		break;
+	case EGears::EST_N:
+		CurrentFuelTickConsumption = 0.f;
+		break;
+	case EGears::EST_1:
+		CurrentFuelTickConsumption = EngineCount * 0.02f;
+		break;
+	case EGears::EST_2:
+		CurrentFuelTickConsumption = EngineCount * 0.05f;
+		break;
+	case EGears::EST_3:
+		CurrentFuelTickConsumption = EngineCount * 0.1f;
+		break;
+	case EGears::EST_4:
+		CurrentFuelTickConsumption = EngineCount * 0.1f;
+		break;
+	case EGears::EST_5:
+		CurrentFuelTickConsumption = EngineCount * 0.1f;
+		break;
+	case EGears::EST_6:
+		CurrentFuelTickConsumption = EngineCount * 0.1f;
+		break;
+	case EGears::EG_MAX:
+		break;
+	default: ;
+	}
+}
+
+void UVehicleCore::HandleOnGearChanged(EGears NewGear)
+{
+	SetFuelTickConsumptionByGear(NewGear);
+	SolveMovementState(NewGear);
+}
+
+void UVehicleCore::SolveMovementState(EGears NewGear)
+{
+	if(MovementState == EMovementState::EMS_Ease_Out) return;
+	if(NewGear != EGears::EST_N) MovementState = EMovementState::EMS_Moving;
+}
+
+void UVehicleCore::HandleOnFuelEmptied(float InFuelModifier)
+{
+	MovementState = EMovementState::EMS_Ease_Out;
+	FuelModifier = FMath::Clamp(InFuelModifier, 0.f, 1.f);
+}
+
+/*
+ * VFX
+ */
+void UVehicleCore::ToggleWaterSplashes()
+{
+	if(OwningVehicle->GetActorLocation().Z < WaterSplashThreshold && !bEnableWaterSplash)
+	{
+		if(GetWorld()) GetWorld()->GetTimerManager().SetTimer(WaterSplashTimer, this, &UVehicleCore::WaterSplashAtLocation, WaterSplashCooldown, true);
+		bEnableWaterSplash = true;
+	}
+	if(OwningVehicle->GetActorLocation().Z > WaterSplashThreshold)
+	{
+		if(GetWorld()) GetWorld()->GetTimerManager().ClearTimer(WaterSplashTimer);
+		bEnableWaterSplash = false;
 	}
 }
 

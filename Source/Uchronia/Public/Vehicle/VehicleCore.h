@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "VehicleData.h"
 #include "Components/ActorComponent.h"
 #include "VehicleCore.generated.h"
 
+enum class EGears : uint8;
 class UNiagaraSystem;
 class UFuelComponent;
 class USKM_ComponentCore;
@@ -28,8 +30,14 @@ public:
 	UFUNCTION(BlueprintCallable) void ToggleEngines(const bool ShouldActivate);
 	UFUNCTION(BlueprintCallable) void UpdateFuelGauges();
 	UFUNCTION(BlueprintCallable) void UpdateFuelStatus();
+	UFUNCTION(BlueprintCallable) bool ShouldTickFuelConsumption();
 	UFUNCTION(BlueprintCallable) bool TickFuelConsumption(float QueriedAmount);
 	UFUNCTION(BlueprintCallable) void WaterSplashAtLocation();
+	
+	UFUNCTION() void HandleOnFuelEmptied(float InFuelModifier);
+	UFUNCTION() void HandleOnGearChanged(EGears NewGear);
+	void SetFuelTickConsumptionByGear(EGears NewGear);
+	void SolveMovementState(EGears NewGear);
 
 	UPROPERTY(BlueprintAssignable, Category="Vehicle|Components")
 	FOnFuelEmpty OnFuelEmptyDelegate;
@@ -39,9 +47,12 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void ToggleWaterSplashes();
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Vehicle")
 	TObjectPtr<AVehicle> OwningVehicle;
+	
+	EMovementState MovementState = EMovementState::EMS_Engine_Off;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Vehicle|Components")
 	TArray<TObjectPtr<AComponentCore>> Engines;
@@ -72,9 +83,28 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|VFX")
 	TObjectPtr<UNiagaraSystem> WaterSplash = nullptr;
 
+	/*
+	 * VFX
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Skimmer Movement|VFX")
+	float WaterSplashCooldown = 0.5f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Skimmer Movement|VFX")
+	float WaterSplashThreshold = 100.f;
+
 private:
 	FTimerHandle FuelConsumptionTimer;
+	float CurrentFuelTickConsumption = 0.f;
+	float FuelModifier = 0.f;
+
+	/*
+	 * VFX
+	 */
+	FTimerHandle WaterSplashTimer;
+	bool bEnableWaterSplash = false;
 
 public:	
-		
+		FORCEINLINE int32 GetEngineData() const { return Engines.Num(); }
+		FORCEINLINE EMovementState GetMovementState() const { return MovementState; }
+		FORCEINLINE void SetMovementState(const EMovementState NewState) { MovementState = NewState; }
 };
