@@ -9,6 +9,7 @@ enum class EComponentInteractionType : uint8
 	ECIT_Hatch UMETA(DisplayName="Hatch"),
 	ECIT_FuelEntry UMETA(DisplayName="FuelEntry"),
 	ECIT_FuelGauge UMETA(DisplayName="FuelGauge"),
+	ECIT_Wheel UMETA(DisplayName="Wheel"),
 	
 	ECIT_Max UMETA(DisplayName="DefaultMAX")
 };
@@ -29,7 +30,8 @@ enum class EHardPoint : uint8
 	EHP_Gauge UMETA(DisplayName="Gauge"),
 	EHP_Moped_Hatch_L UMETA(DisplayName="Moped_Hatch_L"),
 	EHP_Moped_Hatch_R UMETA(DisplayName="Moped_Hatch_R"),
-	EHP_Wheel UMETA(DisplayName="Wheel"),
+	EHP_Wheel_F UMETA(DisplayName="Wheel_F"),
+	EHP_Wheel_R UMETA(DisplayName="Wheel_R"),
 	
 	EHP_MAX UMETA(DisplayName="DefaultMAX")
 };

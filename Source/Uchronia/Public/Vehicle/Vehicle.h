@@ -31,7 +31,7 @@ public:
 	virtual ESeatType GetFirstAvailableSeat_Implementation() override;
 	virtual bool IsAnySeatAvailable_Implementation() override;
 	virtual AVehicle* GetOwningVehicle_Implementation() override;
-	// virtual USkimmerMovement* GetSkimmerMovementComponent() const { return SkimmerMovementComponent; }
+	UFUNCTION(BlueprintCallable) UVehicleCore* GetVehicleCore() const { return  VehicleCore; }
 
 	// UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void ServerExitVehicle();
@@ -67,8 +67,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Core")
-	// TObjectPtr<UVehicleCore> VehicleCore;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Core")
+	TObjectPtr<UVehicleCore> VehicleCore;
 
 	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Core")
 	// TSubclassOf<UActorComponent> MovementComponentClass;
@@ -141,5 +141,4 @@ private:
 public:
 	FORCEINLINE UInputMappingContext* GetVehicleControlsContext() const { return  VehicleControlsContext; }
 	FORCEINLINE UHullComponentCore* GetHullMesh() const { return  HullMesh; }
-	// FORCEINLINE UVehicleCore* GetVehicleCore() const { return  VehicleCore; }
 };

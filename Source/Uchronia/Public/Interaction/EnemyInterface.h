@@ -24,4 +24,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	AActor* GetCombatTarget() const;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	FVector FindRandomLocation();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool MoveToLocation(FVector ToLocation, float Threshold);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool ChasePlayer();
 };

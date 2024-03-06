@@ -8,6 +8,7 @@
 #include "Vehicle/TraceComponent.h"
 #include "HardPointTraceComponent.generated.h"
 
+class USKM_ComponentCore;
 /**
  * 
  */
@@ -25,7 +26,7 @@ public:
 	EHardPoint HardPoint = EHardPoint::EHP_None;
 
 	UPROPERTY(EditAnywhere,  BlueprintReadWrite, Category="Vehicle|HardPoint")
-	TObjectPtr<USkeletalMeshComponent> HardPointComponent;
+	TObjectPtr<USKM_ComponentCore> HardPointComponent;
 
 	
 };

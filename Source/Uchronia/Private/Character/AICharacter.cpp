@@ -11,6 +11,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Uchronia/Uchronia.h"
 #include "UI/Widget/BaseUserwidget.h"
 
@@ -53,6 +54,7 @@ void AAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
+	StartLocation = GetActorLocation();
 	InitAbilityActorInfo();
 	
 	if(HasAuthority())
@@ -142,4 +144,104 @@ void AAICharacter::SetCombatTarget_Implementation(AActor* InCombatTarget)
 AActor* AAICharacter::GetCombatTarget_Implementation() const
 {
 	return CombatTarget;
+}
+
+FVector AAICharacter::FindRandomLocation_Implementation()
+{
+	int32 i = 0;
+	while (i < 10)
+	{
+		i++;
+		const float RandomX = GetActorLocation().X + FMath::FRandRange(-1000.f, 1000.f);
+		const float RandomY = GetActorLocation().Y + FMath::FRandRange(-1000.f, 1000.f);
+		TargetLocation = FVector(RandomX, RandomY, GetActorLocation().Z);
+		if((StartLocation - TargetLocation).Size() > RoamRadius)
+		{
+			TargetLocation = StartLocation;
+		}
+		else
+		{
+			return TargetLocation;
+		}
+	}
+	return TargetLocation;
+	
+	// if((StartLocation - TargetLocation).Size() > RoamRadius)
+	// {
+	// 	i++;
+	// 	if(i < 10)
+	// 	{
+	// 		TargetLocation = FVector(RandomX, RandomY, GetActorLocation().Z);
+	// 	}
+	// 	else
+	// 	{
+	// 		return StartLocation;
+	// 	}
+	// }
+	// else
+	// {
+	// 	return TargetLocation;
+	// }
+}
+
+bool AAICharacter::MoveToLocation_Implementation(FVector ToLocation, float Threshold)
+{
+	if ((GetActorLocation() - ToLocation).Size() > Threshold)
+	{
+		const FVector Target = FVector(ToLocation.X, ToLocation.Y, GetActorLocation().Z);
+		const FRotator LookAtRotation= UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Target);
+		const FVector Direction = UKismetMathLibrary::Conv_RotatorToVector(FRotator(0.f, LookAtRotation.Yaw, 0.f));
+		AddMovementInput(Direction, 1, true);
+		
+		const FRotator Rotation = FRotator(0.f, LookAtRotation.Yaw, 0.f);
+		const FRotator NewRot = UKismetMathLibrary::RLerp(GetActorRotation(), Rotation, 0.1f, true);
+		SetActorRotation(NewRot);
+		return false;
+	}
+	return true;
+}
+
+bool AAICharacter::ChasePlayer_Implementation()
+{
+	switch (EnemyState) {
+		return false;
+	case EEnemyStates::EES_None:
+		break;
+	case EEnemyStates::EES_Idle:
+		break;
+	case EEnemyStates::EES_Patrol:
+		break;
+	case EEnemyStates::EES_Chase:
+		if (IsValid(CombatTarget) && GetDistanceTo(CombatTarget) > AttackDistance)
+		{
+			const FVector LookAtLocation = FVector(CombatTarget->GetActorLocation().X, CombatTarget->GetActorLocation().Y, GetActorLocation().Z);
+			const FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), LookAtLocation);
+			const FVector Direction = UKismetMathLibrary::Conv_RotatorToVector(FRotator(0.f, LookAtRotation.Yaw, 0.f));
+			AddMovementInput(Direction);
+			
+			const FRotator Rotation = FRotator(0.f, LookAtRotation.Yaw, 0.f);
+			const FRotator NewRot = UKismetMathLibrary::RLerp(GetActorRotation(), Rotation, 0.1f, true);
+			SetActorRotation(NewRot);
+		}
+		else if (IsValid(CombatTarget) && GetDistanceTo(CombatTarget) < AttackDistance - 100.f)
+		{
+			const FVector LookAtLocation = FVector(CombatTarget->GetActorLocation().X, CombatTarget->GetActorLocation().Y, GetActorLocation().Z);
+			const FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), LookAtLocation);
+			const FVector Direction = UKismetMathLibrary::Conv_RotatorToVector(FRotator(0.f, LookAtRotation.Yaw, 0.f));
+			AddMovementInput(Direction, -1.f);
+			
+			const FRotator Rotation = FRotator(0.f, LookAtRotation.Yaw, 0.f);
+			const FRotator NewRot = UKismetMathLibrary::RLerp(GetActorRotation(), Rotation, 0.1f, true);
+			SetActorRotation(NewRot);
+		}
+		break;
+	case EEnemyStates::EES_Fall:
+		break;
+	case EEnemyStates::EES_Investigate:
+		break;
+	case EEnemyStates::EES_MAX:
+		break;
+	default: ;
+	}
+	return false;
 }

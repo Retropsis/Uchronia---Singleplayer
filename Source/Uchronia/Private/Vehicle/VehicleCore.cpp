@@ -173,6 +173,8 @@ void UVehicleCore::HandleOnFuelEmptied(float InFuelModifier)
  */
 void UVehicleCore::ToggleWaterSplashes()
 {
+	if(!IsValid(OwningVehicle)) return;
+	
 	if(OwningVehicle->GetActorLocation().Z < WaterSplashThreshold && !bEnableWaterSplash)
 	{
 		if(GetWorld()) GetWorld()->GetTimerManager().SetTimer(WaterSplashTimer, this, &UVehicleCore::WaterSplashAtLocation, WaterSplashCooldown, true);
