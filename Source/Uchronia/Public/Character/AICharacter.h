@@ -10,6 +10,8 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "AICharacter.generated.h"
 
+class USplineComponent;
+class APatrolSpline;
 enum class EEnemyStates : uint8;
 class ABaseAIController;
 class UBehaviorTree;
@@ -31,7 +33,11 @@ public:
 	virtual AActor* GetCombatTarget_Implementation() const override;
 	virtual FVector FindRandomLocation_Implementation() override;
 	virtual bool MoveToLocation_Implementation(FVector ToLocation, float Threshold) override;
+	void BuildDiveTrajectory();
 	virtual bool ChasePlayer_Implementation() override;
+	virtual void MoveAlongSpline_Implementation(USplineComponent* InPatrolSpline) override;
+	virtual FVector GetNextPointOnSpline_Implementation() override;
+	virtual bool DiveAlongTrajectory_Implementation() override;
 	//~ Enemy Interface
 	
 	/* Combat Interface */
@@ -68,7 +74,18 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category="AI")
 	TObjectPtr<ABaseAIController> BaseAIController;
+	
+	//~ Patrol
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AI|Patrol")
+	TObjectPtr<APatrolSpline> PatrolSplineActor;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AI|Patrol")
+	float TimeToComplete = 5.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="AI|Patrol")
+	int32 CurrentSplinePoint = 0;
+	
+	//~ Combat
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="AI|Combat")
 	TObjectPtr<AActor> CombatTarget;
 
@@ -89,6 +106,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AI|Combat")
 	EChasingStates ChasingState = EChasingStates::ECS_None;
+
+	UPROPERTY()
+	TObjectPtr<APatrolSpline> DiveTrajectory;
 
 	/*
 	 * Ability System

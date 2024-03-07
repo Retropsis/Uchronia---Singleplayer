@@ -7,11 +7,14 @@
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseAttributeSet.h"
 #include "AI/BaseAIController.h"
+#include "AI/PatrolSpline.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/SplineComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Uchronia/Uchronia.h"
 #include "UI/Widget/BaseUserwidget.h"
 
@@ -186,14 +189,24 @@ FVector AAICharacter::FindRandomLocation_Implementation()
 
 bool AAICharacter::MoveToLocation_Implementation(FVector ToLocation, float Threshold)
 {
+	const FVector Start = GetActorLocation();
+	const FVector End = Start - FVector(0.f, 0.f, 10000.f);
+	TArray<AActor*> ActorsToIgnore;
+	FHitResult HitResult;
+	UKismetSystemLibrary::LineTraceSingle(this, Start, End,
+		TraceTypeQuery1, false, ActorsToIgnore,
+		EDrawDebugTrace::None, HitResult, true);
+	const float GroundZ = HitResult.bBlockingHit ? HitResult.Location.Z : HitResult.TraceEnd.Z;
+	
 	if ((GetActorLocation() - ToLocation).Size() > Threshold)
 	{
-		const FVector Target = FVector(ToLocation.X, ToLocation.Y, GetActorLocation().Z);
+		const float MinAltitude = FMath::Max(ToLocation.Z, GroundZ + 150.f);
+		const FVector Target = FVector(ToLocation.X, ToLocation.Y, MinAltitude);
 		const FRotator LookAtRotation= UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Target);
-		const FVector Direction = UKismetMathLibrary::Conv_RotatorToVector(FRotator(0.f, LookAtRotation.Yaw, 0.f));
+		const FVector Direction = UKismetMathLibrary::Conv_RotatorToVector(FRotator(LookAtRotation.Pitch, LookAtRotation.Yaw, 0.f));
 		AddMovementInput(Direction, 1, true);
 		
-		const FRotator Rotation = FRotator(0.f, LookAtRotation.Yaw, 0.f);
+		const FRotator Rotation = FRotator(LookAtRotation.Pitch, LookAtRotation.Yaw, 0.f);
 		const FRotator NewRot = UKismetMathLibrary::RLerp(GetActorRotation(), Rotation, 0.1f, true);
 		SetActorRotation(NewRot);
 		return false;
@@ -234,6 +247,7 @@ bool AAICharacter::ChasePlayer_Implementation()
 			const FRotator NewRot = UKismetMathLibrary::RLerp(GetActorRotation(), Rotation, 0.1f, true);
 			SetActorRotation(NewRot);
 		}
+		BuildDiveTrajectory();
 		break;
 	case EEnemyStates::EES_Fall:
 		break;
@@ -245,3 +259,79 @@ bool AAICharacter::ChasePlayer_Implementation()
 	}
 	return false;
 }
+
+void AAICharacter::BuildDiveTrajectory()
+{
+	UWorld* World = GetWorld();
+	if(!World) return;
+
+	DiveTrajectory = World->SpawnActor<APatrolSpline>(APatrolSpline::StaticClass(), GetActorLocation(), GetActorRotation());
+	DiveTrajectory->PatrolSpline->ClearSplinePoints(true);
+	const FVector Start = GetActorLocation();
+	const FVector AttackPoint = CombatTarget->GetActorLocation() + FVector(0.f, 0.f, 100.f);
+	FVector LookAt = UKismetMathLibrary::FindLookAtRotation(Start, AttackPoint).Vector();
+	const FVector Direction = AttackPoint - Start;
+	const float Distance = FVector(Direction.X, Direction.Y, 0.f).Size();
+	LookAt.Z = 0.f;
+	const FVector End = Start + LookAt * Distance * 2.f + FVector(0.f, 0.f, 300.f);
+	DiveTrajectory->PatrolSpline->AddSplineWorldPoint(Start);
+	DiveTrajectory->PatrolSpline->AddSplineWorldPoint(AttackPoint);
+	DiveTrajectory->PatrolSpline->AddSplineWorldPoint(End);
+	for (int i = 0; i < DiveTrajectory->PatrolSpline->GetNumberOfSplinePoints(); ++i)
+	{
+		const FLinearColor Color = i == 0 ? FLinearColor::White : i == 1 ? FLinearColor::Red : FLinearColor::Black;
+		const FVector Point = DiveTrajectory->PatrolSpline->GetWorldLocationAtSplinePoint(i);
+		// UKismetSystemLibrary::DrawDebugSphere(this, Point, 50, 12, Color, 120.f);
+		
+	}
+	CurrentSplinePoint = 1;
+	EnemyState = EEnemyStates::EES_Dive;
+}
+
+FVector AAICharacter::GetNextPointOnSpline_Implementation()
+{
+	if(!IsValid(PatrolSplineActor)) return StartLocation;
+	
+	CurrentSplinePoint = CurrentSplinePoint + 1 <= PatrolSplineActor->PatrolSpline->GetNumberOfSplinePoints() ? CurrentSplinePoint + 1 : 0;
+	TargetLocation = PatrolSplineActor->PatrolSpline->GetWorldLocationAtSplinePoint(CurrentSplinePoint);
+	return TargetLocation;
+}
+
+bool AAICharacter::DiveAlongTrajectory_Implementation()
+{
+	if (!IsValid(DiveTrajectory)) return false;
+	
+	const float DistanceToNextPoint = (GetActorLocation() - DiveTrajectory->PatrolSpline->GetWorldLocationAtSplinePoint(CurrentSplinePoint)).Size();
+	if (DistanceToNextPoint > 50.f)
+	{
+		const FVector TargetLoc = DiveTrajectory->PatrolSpline->GetWorldLocationAtSplinePoint(CurrentSplinePoint);
+		// UKismetSystemLibrary::DrawDebugSphere(this, TargetLoc, 100, 12, FColor::Magenta, 120.f);
+		const FVector LookAtLocation = FVector(TargetLoc.X, TargetLoc.Y, TargetLoc.Z);
+		const FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), LookAtLocation);
+		const FVector Direction = UKismetMathLibrary::Conv_RotatorToVector(FRotator(LookAtRotation.Pitch, LookAtRotation.Yaw, 0.f));
+		AddMovementInput(Direction);
+			
+		const FRotator Rotation = FRotator(LookAtRotation.Pitch, LookAtRotation.Yaw, 0.f);
+		const FRotator NewRot = UKismetMathLibrary::RLerp(GetActorRotation(), Rotation, 0.1f, true);
+		SetActorRotation(NewRot);
+	}
+	if(CurrentSplinePoint == 1 && DistanceToNextPoint < 100.f)
+	{
+		CurrentSplinePoint = 2;
+		return false;
+	}
+	if(CurrentSplinePoint == 2 && DistanceToNextPoint < 100.f)
+	{
+		DiveTrajectory->Destroy();
+		EnemyState = EEnemyStates::EES_Chase;
+		return false;
+	}
+	return false;
+}
+
+void AAICharacter::MoveAlongSpline_Implementation(USplineComponent* InPatrolSpline)
+{
+	// 1.f / TimeToComplete
+	// PatrolSpline->GetSplinePointAt()
+}
+
