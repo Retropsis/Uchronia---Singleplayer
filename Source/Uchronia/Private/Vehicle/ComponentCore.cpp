@@ -19,6 +19,12 @@ void AComponentCore::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void AComponentCore::SetOwningVehicle(AVehicle* InVehicle)
+{
+	OwningVehicle = InVehicle;
+	OnOwningVehicleSet();
+}
+
 void AComponentCore::InitializeComponentCore(AVehicle* InVehicle)
 {
 	OwningVehicle = InVehicle;

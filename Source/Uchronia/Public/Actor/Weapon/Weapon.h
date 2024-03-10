@@ -66,8 +66,15 @@ public:
 	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
 	
 	UPROPERTY()
+	TObjectPtr<UAnimationAsset> ReloadAnimation;
+	
+	UPROPERTY()
 	TObjectPtr<USoundBase> EquipSound;
+	
+	UPROPERTY()
+	TObjectPtr<USoundBase> EmptyContainerSound;
 
+	
 	FName ReloadSectionName = FName();
 	bool bUsePhysicsAsset = false;
 	bool bCanAimDownSights = false;

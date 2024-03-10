@@ -39,6 +39,8 @@ void AWeapon::OnConstruction(const FTransform& Transform)
 		{
 			WeaponMesh->SetSkeletalMesh(WeaponData->WeaponAssetData.WeaponMesh);
 			EquipSound = WeaponData->WeaponAssetData.EquipSound;
+			EmptyContainerSound = WeaponData->WeaponAssetData.EmptyContainerSound;
+			ReloadAnimation = WeaponData->WeaponAssetData.ReloadAnimation;
 			bUsePhysicsAsset = WeaponData->WeaponAssetData.bUsePhysicsAsset;
 			ReloadSectionName = WeaponData->ReloadData.SectionName;
 			bCanInterruptReload = WeaponData->ReloadData.bCanInterruptReload;

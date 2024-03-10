@@ -386,6 +386,7 @@ AWeapon* UCombatComponent::SetupAttachments(TSubclassOf<AWeapon> WeaponToSetup, 
 			FRotator::ZeroRotator,
 			SpawnParams
 		);
+		// TODO: When equipping weapon, Magazine is spawned, but it needs to fetch its current value instead of default value
 		if(Weapon && Weapon->GetWeaponMesh())
 		{
 			for (TTuple<EAttachmentType, FAttachmentData> Attachment : Attachments)
@@ -575,6 +576,10 @@ void UCombatComponent::HandleReload()
 	if(CharacterAnimInstance)
 	{
 		CharacterAnimInstance->PlayReloadMontage();
+	}
+	if(IsValid(EquippedWeapon) and EquippedWeapon->ReloadAnimation)
+	{
+		EquippedWeapon->GetWeaponMesh()->PlayAnimation(EquippedWeapon->ReloadAnimation, false);
 	}
 }
 

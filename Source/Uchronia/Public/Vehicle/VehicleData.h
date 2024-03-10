@@ -16,6 +16,14 @@ enum class ESeatType : uint8
 };
 
 UENUM(BlueprintType)
+enum class EDrivingPose : uint8
+{
+	EDP_None UMETA(DisplayName="None"),
+	EDP_Moped_Driver UMETA(DisplayName="Moped_Driver"),
+	EDP_Skimmer_Driver UMETA(DisplayName="Skimmer_Driver"),
+};
+
+UENUM(BlueprintType)
 enum class EGears : uint8
 {
 	EST_R UMETA(DisplayName="Reverse"),
@@ -33,10 +41,11 @@ UENUM(BlueprintType)
 enum class EMovementState : uint8
 {
 	EMS_None UMETA(DisplayName="None"),
-	EMS_Engine_Off UMETA(DisplayName="Engine_Off"),
-	EMS_Idle UMETA(DisplayName="Idle"),
-	EMS_Moving UMETA(DisplayName="Moving"),
-	EMS_Ease_In UMETA(DisplayName="Ease_In"),
-	EMS_Ease_Out UMETA(DisplayName="Ease_Out"),
+	EMS_Engine_Off_Unable UMETA(DisplayName="Engine_Off_Unable"),
+	EMS_Engine_Off_Ready UMETA(DisplayName="Engine_Off_Ready"),
+	EMS_Engine_On_Idling UMETA(DisplayName="Engine_On_Idling"),
+	EMS_Engine_On_Moving UMETA(DisplayName="Engine_On_Moving"),
+	EMS_Engine_On_Easing_In UMETA(DisplayName="Engine_On_Easing_In"),
+	EMS_Engine_On_Easing_Out UMETA(DisplayName="Engine_On_Easing_Out"),
 	EMS_MAX UMETA(DisplayName="DefaultMAX")
 };

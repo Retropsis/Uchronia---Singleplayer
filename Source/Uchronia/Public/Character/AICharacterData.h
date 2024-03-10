@@ -10,6 +10,7 @@ enum class EEnemyStates : uint8
 	EES_Patrol UMETA(DisplayName="Patrol"),
 	EES_Chase UMETA(DisplayName="Chase"),
 	EES_Dive UMETA(DisplayName="Dive"),
+	EES_Melee UMETA(DisplayName="Melee"),
 	EES_Fall UMETA(DisplayName="Fall"),
 	EES_Investigate UMETA(DisplayName="Investigate"),
 	

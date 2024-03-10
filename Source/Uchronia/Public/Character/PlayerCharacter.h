@@ -131,7 +131,9 @@ private:
 	TObjectPtr<UCameraComponent> FollowCamera;
 	
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<USpringArmComponent> SpringArm;
+	TObjectPtr<USpringArmComponent> SpringArm;;
+	
+	bool bIsDriving = false;
 
 	// TODO: Could be any pickable actor
 	// UPROPERTY(ReplicatedUsing=OnRep_OverlappingWeapon)
@@ -206,6 +208,8 @@ public:
 	bool IsWeaponEquipped() const;
 	bool IsAiming() const;
 	bool IsMelee() const;
+	FORCEINLINE void SetIsDriving(bool IsDriving) { bIsDriving = IsDriving; }
+	FORCEINLINE bool IsDriving() const { return bIsDriving; }
 
 	FORCEINLINE float GetAO_Yaw() const { return AO_Yaw; };
 	FORCEINLINE float GetAO_Pitch() const { return AO_Pitch; };

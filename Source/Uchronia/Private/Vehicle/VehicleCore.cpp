@@ -35,6 +35,8 @@ void UVehicleCore::InitializeVehicleCore()
 	}
 	OnFuelChangeDelegate.AddDynamic(this, &UVehicleCore::UpdateFuelGauges);
 	OnFuelEmptyDelegate.AddDynamic(this, &UVehicleCore::HandleOnFuelEmptied);
+	SetMovementState(EMovementState::EMS_Engine_Off_Unable);
+	
 	TArray<FName> SocketNames = OwningVehicle->GetHullMesh()->GetAllSocketNames();
 	for (FName SocketName : SocketNames)
 	{
@@ -54,8 +56,8 @@ void UVehicleCore::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 void UVehicleCore::UpdateFuelStatus()
 {
 	if(!IsValid(FuelComponent)) return;
-	
-	bIsOutOfFuel = UKismetMathLibrary::NearlyEqual_FloatFloat(FuelComponent->GetCurrentFuelQuantity(), 0.f, 0.01);
+
+	SolveMovementState();
 	
 	if(ShouldTickFuelConsumption()) // False is Retrieved was Near Zero
 	{
@@ -66,7 +68,7 @@ void UVehicleCore::UpdateFuelStatus()
 		ToggleEngines(false);
 	}
 	
-	if (bIsOutOfFuel /*!ShouldTickFuelConsumption()*/)
+	if (bIsOutOfFuel)
 	{
 		if(bIsOutOfFuel != bLastIsOutOfFuel)
 		{
@@ -82,9 +84,49 @@ void UVehicleCore::UpdateFuelStatus()
 	OnFuelChangeDelegate.Broadcast();
 }
 
+void UVehicleCore::SolveMovementState()
+{
+	// First Check Hardware Readiness
+	if(bEngineRequirement && Engines.Num() == 0)
+	{
+		MovementState = EMovementState::EMS_Engine_Off_Unable;
+		return;
+	}
+	if(bAllWheelsRequirement && Wheels.Num() < WheelRequirementCount)
+	{
+		MovementState = EMovementState::EMS_Engine_Off_Unable;
+		return;
+	}
+
+	// No changes while interpolating
+	if(MovementState == EMovementState::EMS_Engine_On_Easing_Out) return;
+	
+	// Second Check Fuel
+	bIsOutOfFuel = UKismetMathLibrary::NearlyEqual_FloatFloat(FuelComponent->GetCurrentFuelQuantity(), 0.f, 0.01);
+	if(!bIsOutOfFuel)
+	{
+		if(bIsOutOfFuel != bLastIsOutOfFuel) bLastIsOutOfFuel = bIsOutOfFuel;
+		MovementState = EMovementState::EMS_Engine_Off_Ready;		
+	} else
+	{
+		MovementState = EMovementState::EMS_Engine_Off_Unable;
+		return;
+	}
+
+	// Check Current Gear
+	if(CurrentGear != EGears::EST_N)
+	{
+		MovementState = EMovementState::EMS_Engine_On_Moving;
+	}
+	else
+	{
+		MovementState = EMovementState::EMS_Engine_On_Idling;
+	}
+}
+
 bool UVehicleCore::ShouldTickFuelConsumption()
 {
-	return TickFuelConsumption(CurrentFuelTickConsumption);
+	return MovementState == EMovementState::EMS_Engine_On_Moving && TickFuelConsumption(CurrentFuelTickConsumption);
 }
 
 bool UVehicleCore::TickFuelConsumption(const float QueriedAmount)
@@ -116,9 +158,9 @@ void UVehicleCore::ToggleEngines(const bool ShouldActivate)
 }
 
 // TODO: Use DataTable to determine each engine power and fuel efficiency
-void UVehicleCore::SetFuelTickConsumptionByGear(const EGears NewGear)
+void UVehicleCore::SetFuelTickConsumptionByGear()
 {
-	switch (NewGear)
+	switch (CurrentGear)
 	{
 	case EGears::EST_R:
 		CurrentFuelTickConsumption = EngineCount * 0.01f;
@@ -152,19 +194,14 @@ void UVehicleCore::SetFuelTickConsumptionByGear(const EGears NewGear)
 
 void UVehicleCore::HandleOnGearChanged(EGears NewGear)
 {
-	SetFuelTickConsumptionByGear(NewGear);
-	SolveMovementState(NewGear);
-}
-
-void UVehicleCore::SolveMovementState(EGears NewGear)
-{
-	if(MovementState == EMovementState::EMS_Ease_Out) return;
-	if(NewGear != EGears::EST_N) MovementState = EMovementState::EMS_Moving;
+	CurrentGear = NewGear;
+	SetFuelTickConsumptionByGear();
+	SolveMovementState();
 }
 
 void UVehicleCore::HandleOnFuelEmptied(float InFuelModifier)
 {
-	MovementState = EMovementState::EMS_Ease_Out;
+	MovementState = EMovementState::EMS_Engine_On_Easing_Out;
 	FuelModifier = FMath::Clamp(InFuelModifier, 0.f, 1.f);
 }
 
@@ -173,7 +210,7 @@ void UVehicleCore::HandleOnFuelEmptied(float InFuelModifier)
  */
 void UVehicleCore::ToggleWaterSplashes()
 {
-	if(!IsValid(OwningVehicle)) return;
+	if(!IsValid(OwningVehicle) || MovementState != EMovementState::EMS_Engine_On_Moving) return;
 	
 	if(OwningVehicle->GetActorLocation().Z < WaterSplashThreshold && !bEnableWaterSplash)
 	{

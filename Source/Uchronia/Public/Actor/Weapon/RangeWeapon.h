@@ -47,9 +47,6 @@ public:
 	FName AmmunitionContainerSocket;
 	
 	UPROPERTY()
-	TObjectPtr<USoundBase> EmptyContainerSound;
-	
-	UPROPERTY()
 	TObjectPtr<UAnimationAsset> FireAnimation;
 
 protected:

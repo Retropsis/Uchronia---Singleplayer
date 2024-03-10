@@ -230,6 +230,11 @@ AVehicle* AVehicle::GetOwningVehicle_Implementation()
 	return this;
 }
 
+EDrivingPose AVehicle::GetDrivingPose_Implementation()
+{
+	return DrivingPose;
+}
+
 void AVehicle::ServerExitVehicle()
 {
 	if(DriverCharacter && DriverCharacter->GetVehicleComponent())

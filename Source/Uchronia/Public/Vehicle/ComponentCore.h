@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "ComponentCore.generated.h"
 
+class USKM_ComponentCore;
 enum class EGears : uint8;
 class AVehicle;
 
@@ -17,7 +18,8 @@ class UCHRONIA_API AComponentCore : public AActor
 public:	
 	AComponentCore();
 	virtual void Tick(float DeltaTime) override;
-	UFUNCTION(BlueprintCallable) void SetOwningVehicle(AVehicle* InVehicle) { OwningVehicle = InVehicle; }
+	UFUNCTION(BlueprintCallable) void SetOwningVehicle(AVehicle* InVehicle);
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent) void OnOwningVehicleSet();
 	UFUNCTION(BlueprintCallable) void InitializeComponentCore(AVehicle* InVehicle);
 	UFUNCTION() virtual void HandleOnGearChanged(EGears NewGear);
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent) void ToggleEngineTrail(bool bShouldActivate);

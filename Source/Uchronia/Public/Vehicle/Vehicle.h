@@ -28,10 +28,14 @@ class UCHRONIA_API AVehicle : public APawn, public IVehicleInterface
 public:
 	AVehicle();
 	virtual void Tick(float DeltaTime) override;
+	UFUNCTION(BlueprintCallable) UVehicleCore* GetVehicleCore() const { return  VehicleCore; }
+
+	//~ Vehicle Interface
 	virtual ESeatType GetFirstAvailableSeat_Implementation() override;
 	virtual bool IsAnySeatAvailable_Implementation() override;
 	virtual AVehicle* GetOwningVehicle_Implementation() override;
-	UFUNCTION(BlueprintCallable) UVehicleCore* GetVehicleCore() const { return  VehicleCore; }
+	virtual EDrivingPose GetDrivingPose_Implementation() override;
+	//~ Vehicle Interface
 
 	// UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void ServerExitVehicle();
@@ -69,12 +73,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Core")
 	TObjectPtr<UVehicleCore> VehicleCore;
-
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Core")
-	// TSubclassOf<UActorComponent> MovementComponentClass;
-
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Core")
-	// TObjectPtr<USkimmerMovement> SkimmerMovementComponent;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Core")
 	EGears CurrentGear = EGears::EST_N;
@@ -118,6 +116,9 @@ protected:
 	/*
 	 * Seats
 	 */
+	UPROPERTY(EditDefaultsOnly, Category="Vehicle|Animation")
+	EDrivingPose DrivingPose = EDrivingPose::EDP_Skimmer_Driver;
+	
 	UPROPERTY(BlueprintReadWrite)
 	bool bDriverSeatOccupied = false;
 	
@@ -141,4 +142,5 @@ private:
 public:
 	FORCEINLINE UInputMappingContext* GetVehicleControlsContext() const { return  VehicleControlsContext; }
 	FORCEINLINE UHullComponentCore* GetHullMesh() const { return  HullMesh; }
+	
 };

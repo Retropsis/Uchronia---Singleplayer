@@ -62,6 +62,27 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AI|Movement")
 	float BaseWalkSpeed = 250.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AI|Movement")
+	float BaseFlySpeed = 400.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AI|Movement")
+	float BaseChaseSpeed = 600.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AI|Movement")
+	float BaseDiveSpeed = 900.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="AI|Movement")
+	float DiveCooldown = 10.f;
+
+	UPROPERTY(BlueprintReadOnly, Category="AI|Movement")
+	FTimerHandle DivingTimer;
+
+	UFUNCTION(BlueprintCallable)
+	void StartDiving();
+
+	UPROPERTY(BlueprintReadOnly, Category="AI|Movement")
+	bool bCirclingDirection = false;
 
 protected:
 	virtual void BeginPlay() override;

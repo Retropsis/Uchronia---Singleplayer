@@ -1,6 +1,8 @@
 // Retropsis @ 2023-2024
 
 #include "ActorComponents/VehicleComponent.h"
+
+#include "Character/CharacterAnimInstance.h"
 #include "Character/PlayerCharacter.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -48,18 +50,11 @@ void UVehicleComponent::InteractWithVehicle()
 		if(UKismetSystemLibrary::LineTraceSingle(this, Start, End, TraceTypeQuery1, false,
 			ActorsToIgnore, EDrawDebugTrace::None, HitResult, true))
 		{
-			// if (IVehicleInterface* VehicleInterface = Cast<IVehicleInterface>(HitResult.GetActor()))
 			if (HitResult.GetActor()->Implements<UVehicleInterface>() && HitResult.GetComponent()->ComponentHasTag(FName("Controller")))
 			{
-				// if(VehicleInterface && HitResult.GetComponent()->ComponentHasTag(FName("Controller")))
-				// {
-					// InteractingVehicle = VehicleInterface->Execute_GetOwningVehicle(this);
-					IVehicleInterface* VehicleInterface = Cast<IVehicleInterface>(HitResult.GetActor());
-					InteractingVehicle = VehicleInterface->Execute_GetOwningVehicle(HitResult.GetActor());
-					// InteractingVehicle = IVehicleInterface::Execute_GetOwningVehicle(HitResult.GetActor());
-					// InteractingVehicle = HitResult.GetActor();
-					ServerTryEnterVehicle(InteractingVehicle);
-				// }
+				IVehicleInterface* VehicleInterface = Cast<IVehicleInterface>(HitResult.GetActor());
+				InteractingVehicle = VehicleInterface->Execute_GetOwningVehicle(HitResult.GetActor());
+				ServerTryEnterVehicle(InteractingVehicle);
 			}
 		}
 	}
@@ -84,6 +79,10 @@ void UVehicleComponent::TryEnterVehicle(AVehicle* VehicleToEnter)
 				OwningCharacter->ToggleCollisions(false);
 				OwningCharacter->ClientToggleCollisions(false);
 				OwningCharacter->MulticastToggleCollisions(false);
+				if (VehicleInterface->Execute_GetDrivingPose(VehicleToEnter) == EDrivingPose::EDP_Moped_Driver)
+				{
+					OwningCharacter->SetIsDriving(true);
+				}
 				
 				switch (ESeatType Seat = VehicleInterface->Execute_GetFirstAvailableSeat(VehicleToEnter)) {
 				case ESeatType::EST_None:
@@ -163,4 +162,5 @@ void UVehicleComponent::MulticastDetachPlayerFromSeat_Implementation()
 {
 	const FDetachmentTransformRules TransformRules = FDetachmentTransformRules(EDetachmentRule::KeepWorld, true);
 	OwningCharacter->DetachFromActor(TransformRules);
+	OwningCharacter->SetIsDriving(false);
 }

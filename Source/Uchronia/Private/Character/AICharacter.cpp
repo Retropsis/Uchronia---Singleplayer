@@ -168,23 +168,6 @@ FVector AAICharacter::FindRandomLocation_Implementation()
 		}
 	}
 	return TargetLocation;
-	
-	// if((StartLocation - TargetLocation).Size() > RoamRadius)
-	// {
-	// 	i++;
-	// 	if(i < 10)
-	// 	{
-	// 		TargetLocation = FVector(RandomX, RandomY, GetActorLocation().Z);
-	// 	}
-	// 	else
-	// 	{
-	// 		return StartLocation;
-	// 	}
-	// }
-	// else
-	// {
-	// 	return TargetLocation;
-	// }
 }
 
 bool AAICharacter::MoveToLocation_Implementation(FVector ToLocation, float Threshold)
@@ -216,8 +199,11 @@ bool AAICharacter::MoveToLocation_Implementation(FVector ToLocation, float Thres
 
 bool AAICharacter::ChasePlayer_Implementation()
 {
+	FVector LocationXY = FVector::ZeroVector;
+	FVector TargetLocationXY = FVector::ZeroVector;
+	float Distance = 0.f;
+	
 	switch (EnemyState) {
-		return false;
 	case EEnemyStates::EES_None:
 		break;
 	case EEnemyStates::EES_Idle:
@@ -225,7 +211,15 @@ bool AAICharacter::ChasePlayer_Implementation()
 	case EEnemyStates::EES_Patrol:
 		break;
 	case EEnemyStates::EES_Chase:
-		if (IsValid(CombatTarget) && GetDistanceTo(CombatTarget) > AttackDistance)
+		if(!IsValid(CombatTarget)) return false;
+
+		LocationXY = FVector(GetActorLocation().X, GetActorLocation().Y, 0.f);
+		TargetLocationXY = FVector(CombatTarget->GetActorLocation().X, CombatTarget->GetActorLocation().Y, 0.f);
+		Distance = (LocationXY - TargetLocationXY).Size();
+
+		GEngine->AddOnScreenDebugMessage(132, 2.f, FColor::Green, FString::Printf(TEXT("Distance: %f"), Distance));
+		
+		if (Distance > AttackDistance)
 		{
 			const FVector LookAtLocation = FVector(CombatTarget->GetActorLocation().X, CombatTarget->GetActorLocation().Y, GetActorLocation().Z);
 			const FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), LookAtLocation);
@@ -236,18 +230,30 @@ bool AAICharacter::ChasePlayer_Implementation()
 			const FRotator NewRot = UKismetMathLibrary::RLerp(GetActorRotation(), Rotation, 0.1f, true);
 			SetActorRotation(NewRot);
 		}
-		else if (IsValid(CombatTarget) && GetDistanceTo(CombatTarget) < AttackDistance - 100.f)
+		else if (Distance < AttackDistance - 100.f)
 		{
 			const FVector LookAtLocation = FVector(CombatTarget->GetActorLocation().X, CombatTarget->GetActorLocation().Y, GetActorLocation().Z);
 			const FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), LookAtLocation);
 			const FVector Direction = UKismetMathLibrary::Conv_RotatorToVector(FRotator(0.f, LookAtRotation.Yaw, 0.f));
 			AddMovementInput(Direction, -1.f);
 			
-			const FRotator Rotation = FRotator(0.f, LookAtRotation.Yaw, 0.f);
-			const FRotator NewRot = UKismetMathLibrary::RLerp(GetActorRotation(), Rotation, 0.1f, true);
+			const FRotator Rotation = FRotator(0.f, LookAtRotation.Yaw, 0.f) * -1.f;
+			// UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() - Direction * 200.f, 10.f, FLinearColor::Blue, 2.f, 2.f);
+			const FRotator NewDirection = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), GetActorLocation() - Direction);
+			const FRotator NewRot = UKismetMathLibrary::RLerp(GetActorRotation(), NewDirection, 0.1f, true);
 			SetActorRotation(NewRot);
 		}
-		BuildDiveTrajectory();
+		else
+		{
+			const FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), CombatTarget->GetActorLocation());
+			const FVector Direction = UKismetMathLibrary::GetRightVector(LookAtRotation);
+			AddMovementInput(Direction, bCirclingDirection ? 0.5f : -0.5f);
+			
+			const FRotator NewDirection = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), GetActorLocation() - Direction * (bCirclingDirection ? -1.f : 1.f));
+			const FRotator Rotation = UKismetMathLibrary::RLerp(GetActorRotation(), NewDirection, 0.1f, true);
+			// UKismetSystemLibrary::DrawDebugArrow(this, GetActorLocation(), GetActorLocation() - Rotation.Vector() * 200.f, 10.f, FLinearColor::Red, 2.f, 2.f);
+			SetActorRotation(Rotation);
+		}
 		break;
 	case EEnemyStates::EES_Fall:
 		break;
@@ -255,9 +261,20 @@ bool AAICharacter::ChasePlayer_Implementation()
 		break;
 	case EEnemyStates::EES_MAX:
 		break;
-	default: ;
+	case EEnemyStates::EES_Dive:
+		break;
+	case EEnemyStates::EES_Melee:
+		break;
+	default: break;
 	}
 	return false;
+}
+
+void AAICharacter::StartDiving()
+{
+	BuildDiveTrajectory();
+	EnemyState = EEnemyStates::EES_Dive;
+	GetCharacterMovement()->MaxFlySpeed = BaseDiveSpeed;
 }
 
 void AAICharacter::BuildDiveTrajectory()
@@ -273,7 +290,7 @@ void AAICharacter::BuildDiveTrajectory()
 	const FVector Direction = AttackPoint - Start;
 	const float Distance = FVector(Direction.X, Direction.Y, 0.f).Size();
 	LookAt.Z = 0.f;
-	const FVector End = Start + LookAt * Distance * 2.f + FVector(0.f, 0.f, 300.f);
+	const FVector End = Start + LookAt * Distance * 2.f + FVector(0.f, 0.f, 0.f);
 	DiveTrajectory->PatrolSpline->AddSplineWorldPoint(Start);
 	DiveTrajectory->PatrolSpline->AddSplineWorldPoint(AttackPoint);
 	DiveTrajectory->PatrolSpline->AddSplineWorldPoint(End);
@@ -285,7 +302,6 @@ void AAICharacter::BuildDiveTrajectory()
 		
 	}
 	CurrentSplinePoint = 1;
-	EnemyState = EEnemyStates::EES_Dive;
 }
 
 FVector AAICharacter::GetNextPointOnSpline_Implementation()
@@ -317,13 +333,17 @@ bool AAICharacter::DiveAlongTrajectory_Implementation()
 	}
 	if(CurrentSplinePoint == 1 && DistanceToNextPoint < 100.f)
 	{
+		GetCharacterMovement()->MaxFlySpeed = BaseFlySpeed;
 		CurrentSplinePoint = 2;
+		EnemyState = EEnemyStates::EES_Melee;
 		return false;
 	}
 	if(CurrentSplinePoint == 2 && DistanceToNextPoint < 100.f)
 	{
 		DiveTrajectory->Destroy();
 		EnemyState = EEnemyStates::EES_Chase;
+		bCirclingDirection = FMath::RandBool();
+		GetWorldTimerManager().SetTimer(DivingTimer, this, &AAICharacter::StartDiving, DiveCooldown, false);
 		return false;
 	}
 	return false;

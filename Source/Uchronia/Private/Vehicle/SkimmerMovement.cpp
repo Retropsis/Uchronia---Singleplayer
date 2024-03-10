@@ -44,19 +44,19 @@ void USkimmerMovement::SolveMovement(const float DeltaTime)
 		TargetElevationSpeed = 0.f;
 		TargetYawRotationSpeed = 0.f;
 		break;
-	case EMovementState::EMS_Engine_Off:
+	case EMovementState::EMS_Engine_Off_Ready:
 		TargetThrustSpeed = 0.f;
 		TargetSteeringSpeed = 0.f;
 		TargetElevationSpeed = 0.f;
 		TargetYawRotationSpeed = 0.f;
 		break;
-	case EMovementState::EMS_Idle:
+	case EMovementState::EMS_Engine_On_Idling:
 		break;
-	case EMovementState::EMS_Moving:
+	case EMovementState::EMS_Engine_On_Moving:
 		break;
-	case EMovementState::EMS_Ease_In:
+	case EMovementState::EMS_Engine_On_Easing_In:
 		break;
-	case EMovementState::EMS_Ease_Out:
+	case EMovementState::EMS_Engine_On_Easing_Out:
 		TargetThrustSpeed = 0.f;
 		TargetSteeringSpeed = 0.f;
 		TargetElevationSpeed = 0.f;
@@ -100,13 +100,13 @@ void USkimmerMovement::SolveMovement(const float DeltaTime)
 	// Update Thrust Speed
 	CurrentThrustSpeedFactor = FMath::FInterpTo(CurrentThrustSpeedFactor, TargetThrustSpeed, DeltaTime, 0.5f);
 
-	if(VehicleCore->GetMovementState() == EMovementState::EMS_Ease_Out &&
+	if(VehicleCore->GetMovementState() == EMovementState::EMS_Engine_On_Easing_Out &&
 		UKismetMathLibrary::NearlyEqual_FloatFloat(CurrentThrustSpeedFactor, 0.f, 0.01f) &&
 		UKismetMathLibrary::NearlyEqual_FloatFloat(CurrentElevationSpeedFactor, 0.f, 0.01f) &&
 		UKismetMathLibrary::NearlyEqual_FloatFloat(CurrentSteeringSpeedFactor, 0.f, 0.01f) &&
 		UKismetMathLibrary::NearlyEqual_FloatFloat(CurrentYawRotationSpeedFactor, 0.f, 0.01f))
 	{
-		VehicleCore->SetMovementState(EMovementState::EMS_Engine_Off);
+		VehicleCore->SetMovementState(EMovementState::EMS_Engine_Off_Ready);
 	}
 }
 

@@ -7,6 +7,7 @@
 #include "Vehicle/VehicleData.h"
 #include "VehicleInterface.generated.h"
 
+class IFuelInterface;
 class AVehicle;
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -31,4 +32,7 @@ class UCHRONIA_API IVehicleInterface
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	AVehicle* GetOwningVehicle();
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	EDrivingPose GetDrivingPose();
 };

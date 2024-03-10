@@ -35,6 +35,8 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bSwimming = PlayerCharacter->IsSwimming();
 	bWeaponEquipped = PlayerCharacter->IsWeaponEquipped();
 	EquippedWeapon = PlayerCharacter->GetEquippedWeapon();
+
+	bIsDriving = PlayerCharacter->IsDriving();
 	
 	bIsCrouched = PlayerCharacter->bIsCrouched;
 	bAiming = PlayerCharacter->IsAiming();
@@ -89,13 +91,15 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			
 			// RightHandRotation = FMath::RInterpTo(RightHandRotation, LookAtRotation, DeltaSeconds, 30.f);
 
-			RightHandRotation = UKismetMathLibrary::FindLookAtRotation(RightHandTransform.GetLocation(), RightHandTransform.GetLocation() + (RightHandTransform.GetLocation() - PlayerCharacter->GetHitTarget()));
+			const FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(RightHandTransform.GetLocation(), RightHandTransform.GetLocation() + (RightHandTransform.GetLocation() - PlayerCharacter->GetHitTarget()));
+			RightHandRotation = FRotator(LookAtRotation.Roll, LookAtRotation.Yaw, -LookAtRotation.Pitch);
 			RightHandRotation.Yaw -= 90.f;
 		
 			const FTransform MuzzleFlashTransform = EquippedWeapon->GetWeaponMesh()->GetSocketTransform(FName("MuzzleFlash"), RTS_World);
 			const FVector MuzzleX(FRotationMatrix(MuzzleFlashTransform.GetRotation().Rotator()).GetUnitAxis(EAxis::X));
-			UKismetSystemLibrary::DrawDebugLine(this, MuzzleFlashTransform.GetLocation(), MuzzleFlashTransform.GetLocation() + MuzzleX * 1000.f, FLinearColor::Red);
-			UKismetSystemLibrary::DrawDebugLine(this, MuzzleFlashTransform.GetLocation(), PlayerCharacter->GetHitTarget(), FLinearColor::Blue);
+			// UKismetSystemLibrary::DrawDebugLine(this, MuzzleFlashTransform.GetLocation(), MuzzleFlashTransform.GetLocation() + MuzzleX * 1000.f, FLinearColor::Red);
+			// UKismetSystemLibrary::DrawDebugLine(this, MuzzleFlashTransform.GetLocation(), PlayerCharacter->GetHitTarget(), FLinearColor::Blue);
+			// UKismetSystemLibrary::DrawDebugLine(this, MuzzleFlashTransform.GetLocation(), MuzzleFlashTransform.GetLocation() + RightHandRotation.Vector() * 1000.f, FLinearColor::Green);
 		}
 	}
 	bUseFABRIK = PlayerCharacter->GetCombatState() == ECombatState::ECS_Unoccupied && !PlayerCharacter->IsMelee();

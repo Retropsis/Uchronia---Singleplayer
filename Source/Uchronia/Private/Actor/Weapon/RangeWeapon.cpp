@@ -6,6 +6,7 @@
 #include "ActorComponents/CombatComponent.h"
 #include "Character/PlayerCharacter.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/CharacterPlayerController.h"
 
@@ -32,7 +33,6 @@ void ARangeWeapon::OnConstruction(const FTransform& Transform)
 		{
 			bVisualizeScatter = WeaponData->bVisualizeScatter;
 			bAutomatic = WeaponData->bAutomatic;
-			// EmptyContainerSound = WeaponData->WeaponAssetData.EmptyContainerSound;
 			FireInterval = WeaponData->WeaponStatistics.FireInterval;
 			MarksmanFOV = WeaponData->WeaponStatistics.MarksmanFOV;
 			MarksmanInterpSpeed = WeaponData->WeaponStatistics.MarksmanInterpSpeed;
@@ -85,14 +85,29 @@ void ARangeWeapon::Trigger(const FVector& HitTarget)
 
 void ARangeWeapon::SpendRound()
 {
-	Ammo = FMath::Clamp(Ammo - 1, 0, MagCapacity);
-	SetHUDAmmo();
+	// Ammo = FMath::Clamp(Ammo - 1, 0, MagCapacity);
+	// SetHUDAmmo();
+
+	//~ Internally Loaded
+	if(AmmoContainerType == EAmmoContainerType::EACT_Internal)
+	{
+		GEngine->AddOnScreenDebugMessage(132, 8.f, FColor::Purple, FString::Printf(TEXT("Internal Count: %d"), Ammo));
+		Ammo = FMath::Clamp(Ammo - 1, 0, MagCapacity);
+		SetHUDAmmo();
+	}
 	
+	//~ Missing Magazine
 	if(!AttachmentMap.Contains(EAttachmentType::EAT_Magazine))
 	{
 		GEngine->AddOnScreenDebugMessage(132, 8.f, FColor::Purple, FString::Printf(TEXT("No magazine !")));
+		if(EmptyContainerSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, EmptyContainerSound, GetActorLocation());
+		}
 		return;
 	}
+	
+	//~ Loaded With A Magazine or Similar
 	if (UAttachmentComponent* Component =  *AttachmentMap.Find(EAttachmentType::EAT_Magazine))
 	{
 		if (UAmmoContainer* Magazine = Cast<UAmmoContainer>(Component))
@@ -120,6 +135,7 @@ bool ARangeWeapon::HasAmmo()
 		if (UAmmoContainer* Magazine = Cast<UAmmoContainer>(Component))
 		{
 			GEngine->AddOnScreenDebugMessage(132, 8.f, FColor::Purple, FString::Printf(TEXT("Ammo Left: %d"), Magazine->GetCurrentCount()));
+			return Magazine->GetCurrentCount() > 0;
 		}
 	}
 	return Ammo > 0;

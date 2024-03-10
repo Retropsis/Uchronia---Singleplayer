@@ -37,6 +37,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Ground Movement|Properties")
 	float HeightOffset = 35.f;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Ground Movement|Properties")
+	float ForwardInterpSpeed = 0.5f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Ground Movement|Properties")
+	float HandleInterpSpeed = 4.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Ground Movement|Properties")
+	float VehicleRotationInterpSpeed = 1.f;
+	
 	/*
 	 * Calculation
 	 */

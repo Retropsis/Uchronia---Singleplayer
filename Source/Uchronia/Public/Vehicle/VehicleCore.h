@@ -36,8 +36,22 @@ public:
 	
 	UFUNCTION() void HandleOnFuelEmptied(float InFuelModifier);
 	UFUNCTION() void HandleOnGearChanged(EGears NewGear);
-	void SetFuelTickConsumptionByGear(EGears NewGear);
-	void SolveMovementState(EGears NewGear);
+	void SetFuelTickConsumptionByGear();
+	void SolveMovementState();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Properties")
+	bool bEngineRequirement = false;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Properties")
+	bool bAllWheelsRequirement = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Properties")
+	int32 WheelRequirementCount = 0;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Properties")
+	bool bSailRequirement = false;
+
+	EGears CurrentGear = EGears::EST_N;
 
 	UPROPERTY(BlueprintAssignable, Category="Vehicle|Components")
 	FOnFuelEmpty OnFuelEmptyDelegate;
@@ -52,10 +66,16 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Vehicle")
 	TObjectPtr<AVehicle> OwningVehicle;
 	
-	EMovementState MovementState = EMovementState::EMS_Engine_Off;
+	EMovementState MovementState = EMovementState::EMS_Engine_Off_Ready;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Vehicle|Components")
 	TArray<TObjectPtr<AComponentCore>> Engines;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Vehicle|Components")
+	TArray<TObjectPtr<USKM_ComponentCore>> Wheels;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Vehicle|Components")
+	TArray<TObjectPtr<AComponentCore>> Sails;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Vehicle|Components")
 	int32 EngineCount = 0;

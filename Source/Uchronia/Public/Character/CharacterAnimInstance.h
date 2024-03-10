@@ -112,4 +112,7 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly, Category="CharacterMovement")
 	bool bSwimming;
+	
+	UPROPERTY(BlueprintReadOnly, Category="CharacterMovement")
+	bool bIsDriving = false;
 };
