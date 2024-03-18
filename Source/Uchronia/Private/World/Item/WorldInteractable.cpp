@@ -35,22 +35,22 @@ void AWorldInteractable::BeginPlay()
 	InitializeInteractable(AWorldInteractable::StaticClass());
 }
 
-void AWorldInteractable::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
-{
-	Super::PostEditChangeProperty(PropertyChangedEvent);
-
-	const FName ChangedPropertyName = PropertyChangedEvent.Property ? PropertyChangedEvent.Property->GetFName() : NAME_None;
-	if(ChangedPropertyName == GET_MEMBER_NAME_CHECKED(AWorldInteractable, DesiredItemID))
-	{
-		if(ItemDataTable)
-		{
-			if(const FItemData* ItemData = ItemDataTable->FindRow<FItemData>(DesiredItemID, DesiredItemID.ToString()))
-			{
-				InteractableMesh->SetStaticMesh(ItemData->AssetData.Mesh);
-			}
-		}
-	}
-}
+// void AWorldInteractable::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+// {
+// 	Super::PostEditChangeProperty(PropertyChangedEvent);
+//
+// 	const FName ChangedPropertyName = PropertyChangedEvent.Property ? PropertyChangedEvent.Property->GetFName() : NAME_None;
+// 	if(ChangedPropertyName == GET_MEMBER_NAME_CHECKED(AWorldInteractable, DesiredItemID))
+// 	{
+// 		if(ItemDataTable)
+// 		{
+// 			if(const FItemData* ItemData = ItemDataTable->FindRow<FItemData>(DesiredItemID, DesiredItemID.ToString()))
+// 			{
+// 				InteractableMesh->SetStaticMesh(ItemData->AssetData.Mesh);
+// 			}
+// 		}
+// 	}
+// }
 
 void AWorldInteractable::InitializeInteractable(const TSubclassOf<AWorldInteractable> BaseClass)
 {

@@ -8,6 +8,7 @@
 #include "Vehicle/TraceComponent.h"
 #include "HardPointTraceComponent.generated.h"
 
+class AVehicle;
 class USKM_ComponentCore;
 /**
  * 
@@ -18,15 +19,15 @@ class UCHRONIA_API UHardPointTraceComponent : public UTraceComponent, public IHa
 	GENERATED_BODY()
 
 public:
-	virtual EHardPoint GetHardPoint_Implementation() const override;
 	virtual void InitializeComponent() override;
 	virtual void OnComponentCreated() override;
+	virtual EHardPoint GetHardPoint_Implementation() const override;
+	virtual USkeletalMesh* GetComponentPreview_Implementation() const override;
+	virtual USKM_ComponentCore* GetHardPointComponent_Implementation() const override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|HardPoint")
+	UPROPERTY(BlueprintReadOnly, Category="Vehicle|HardPoint")
 	EHardPoint HardPoint = EHardPoint::EHP_None;
 
-	UPROPERTY(EditAnywhere,  BlueprintReadWrite, Category="Vehicle|HardPoint")
+	UPROPERTY(BlueprintReadWrite, Category="Vehicle|HardPoint")
 	TObjectPtr<USKM_ComponentCore> HardPointComponent;
-
-	
 };

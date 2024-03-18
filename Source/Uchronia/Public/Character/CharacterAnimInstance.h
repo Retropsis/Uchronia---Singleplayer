@@ -7,6 +7,7 @@
 #include "Types/AnimationStates.h"
 #include "CharacterAnimInstance.generated.h"
 
+class UHullComponentCore;
 class ARangeWeapon;
 class AWeapon;
 class APlayerCharacter;
@@ -30,6 +31,15 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	EPhysicalSurface GetSurfaceType();
+	
+	UPROPERTY(BlueprintReadOnly, Category="CharacterMovement")
+	FTransform LeftHandleTransform;
+	
+	UPROPERTY(BlueprintReadOnly, Category="CharacterMovement")
+	FTransform RightHandleTransform;
+
+	UPROPERTY(BlueprintReadOnly, Category="CharacterMovement")
+	TObjectPtr<UHullComponentCore> InteractingHull;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category="CharacterMovement")

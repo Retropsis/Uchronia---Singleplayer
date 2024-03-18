@@ -8,6 +8,20 @@
 #include "Interaction/InteractionInterface.h"
 #include "Item.generated.h"
 
+USTRUCT(BlueprintType)
+struct FWorldItemData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite) FDataTableRowHandle ItemID;
+	
+	UPROPERTY(BlueprintReadWrite) int32 Quantity;
+	
+	UPROPERTY(BlueprintReadWrite) int32 InternalQuantity;
+	
+	UPROPERTY(BlueprintReadWrite) float Health = 100.f;
+};
+
 class APlayerCharacter;
 
 UCLASS()
@@ -21,7 +35,6 @@ public:
 	//~ Interaction Interface
 	virtual void Interact(APlayerCharacter* PlayerCharacter) override;
 	//~ Interaction Interface
-
 	
 	
 protected:

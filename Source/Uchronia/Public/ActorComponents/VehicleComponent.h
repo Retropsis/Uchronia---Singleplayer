@@ -46,6 +46,9 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastDetachPlayerFromSeat();
 
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<AVehicle> InteractingVehicle = nullptr;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -55,9 +58,6 @@ private:
 	
 	UPROPERTY()
 	TObjectPtr<APlayerCharacter> OwningCharacter = nullptr;
-
-	UPROPERTY()
-	TObjectPtr<AVehicle> InteractingVehicle = nullptr;
 
 	ESeatType OccupyingSeat = ESeatType::EST_None;
 

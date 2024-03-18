@@ -3,28 +3,12 @@
 #include "CoreMinimal.h"
 #include "Actor/Weapon/AttachmentData.h"
 #include "Actor/Weapon/WeaponData.h"
+#include "ActorComponents/Inventory/InventoryData.h"
 #include "Engine/DataTable.h"
 #include "ItemData.generated.h"
 
 class UAttachmentComponent;
 class AWeapon;
-
-UENUM(BlueprintType)
-enum class ESlotType : uint8
-{
-	EIT_None UMETA(DisplayName="None"),
-	EIT_Inventory UMETA(DisplayName="Inventory"),
-	EIT_MainHand UMETA(DisplayName="MainHand"),
-	EIT_Offhand UMETA(DisplayName="Offhand"),
-	EIT_AnyHand UMETA(DisplayName="AnyHand"),
-	EIT_Head UMETA(DisplayName="Head"),
-	EIT_UpperBody UMETA(DisplayName="UpperBody"),
-	EIT_LowerBody UMETA(DisplayName="LowerBody"),
-	EIT_Armor UMETA(DisplayName="Armor"),
-	EIT_Belt UMETA(DisplayName="Belt"),
-	EIT_Feet UMETA(DisplayName="Feet"),
-	EIT_Backpack UMETA(DisplayName="Backpack"),
-};
 
 UENUM(BlueprintType)
 enum class EItemCondition : uint8

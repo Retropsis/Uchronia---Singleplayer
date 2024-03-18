@@ -3,10 +3,14 @@
 #include "Player/CharacterPlayerController.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputSubsystems.h"
+#include "EnhancedActionKeyMapping.h"
 #include "Character/PlayerCharacter.h"
 #include "GameplayTagContainer.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
+#include "GameFramework/SaveGame.h"
 #include "Input/PlayerInputComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetTextLibrary.h"
 #include "UI/Widget/DamageTextComponent.h"
 
 ACharacterPlayerController::ACharacterPlayerController()
@@ -262,6 +266,73 @@ void ACharacterPlayerController::SetHUDGrenadeCount(int32 GrenadeCount) const
 {
 	OnGrenadeAmountChanged.Broadcast(GrenadeCount);
 }
+
+/*
+ * Key Remapping System
+ */
+// FEnhancedActionKeyMapping ACharacterPlayerController::GetMappingsFromSubsystem(FText DisplayName)
+// {
+	// if(UEnhancedInputLocalPlayerSubsystem*  Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	// {
+	// 	Mappings = Subsystem->GetAllPlayerMappableActionKeyMappings();
+	// 	for (FEnhancedActionKeyMapping Mapping : Mappings)
+	// 	{			
+	// 		if (UKismetTextLibrary::EqualEqual_TextText(Mapping.GetDisplayName(), DisplayName))
+	// 		{
+	// 			return Mapping;
+	// 		}
+	// 	}
+	// }
+	// return FEnhancedActionKeyMapping();
+
+// }
+
+// void ACharacterPlayerController::SaveSettings()
+// {
+	// if(UGameplayStatics::DoesSaveGameExist(Slot, 0))
+	// {
+	// 	UGameplayStatics::LoadGameFromSlot(Slot, 0);
+	// }
+	// else
+	// {
+	// 	SavedGame = UGameplayStatics::CreateSaveGameObject(USaveGame::StaticClass());
+	// 	// SavedGame->
+	// }
+	// UGameplayStatics::SaveGameToSlot(SavedGame, Slot, 0);
+// }
+
+// void ACharacterPlayerController::LoadSettings()
+// {
+	// if(UGameplayStatics::DoesSaveGameExist(Slot, 0))
+	// {
+	// 	UGameplayStatics::LoadGameFromSlot(Slot, 0);
+	// }
+	// else
+	// {
+	// 	SavedGame = UGameplayStatics::CreateSaveGameObject(USaveGame::StaticClass());
+	// 	if(UEnhancedInputLocalPlayerSubsystem*  Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	// 	{
+	// 		Mappings = Subsystem->GetAllPlayerMappableActionKeyMappings();
+	// 		for (FEnhancedActionKeyMapping Mapping : Mappings)
+	// 		{
+	// 			Mapping.GetDisplayName();
+	// 			// Subsystem->AddPlayerMappedKeyInSlot();
+	// 		}
+	// 	}
+	// }
+// }
+//
+// void ACharacterPlayerController::UpdateMappings(FText DisplayName, FKey NewKey)
+// {
+// }
+//
+// void ACharacterPlayerController::RemoveKeySelectionMenu()
+// {
+// }
+//
+// void ACharacterPlayerController::CreateKeySelectionMenu()
+// {
+// }
 
 /*
  * ACCESSORS

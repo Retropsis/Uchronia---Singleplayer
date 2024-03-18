@@ -10,7 +10,7 @@ public class Uchronia : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "GameplayAbilities", "UMG", "PhysicsCore" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "Niagara", "GameplayTags", "GameplayTasks", "AIModule", "Slate", "SlateCore" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "Niagara", "GameplayTags", "GameplayTasks", "AIModule", "Slate", "SlateCore", "EnhancedInput" });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

@@ -19,9 +19,9 @@ class UCHRONIA_API AWorldInteractable : public AActor, public IInteractionInterf
 public:	
 	AWorldInteractable();
 
-#if WITH_EDITOR
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-#endif
+// #if WITH_EDITOR
+// 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+// #endif
 	
 	void InitializeInteractable(const TSubclassOf<AWorldInteractable> BaseClass);
 	virtual void UpdateInteractableData();

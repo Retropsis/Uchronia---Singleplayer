@@ -20,9 +20,9 @@ public:
 	APickup();
 	virtual void Destroyed() override;
 
-#if WITH_EDITOR
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-#endif
+// #if WITH_EDITOR
+// 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+// #endif
 
 	//~ Interaction Interface
 	virtual void BeginFocus() override;

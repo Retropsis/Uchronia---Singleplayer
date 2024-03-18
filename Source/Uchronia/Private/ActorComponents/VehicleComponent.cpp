@@ -7,6 +7,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/CharacterPlayerController.h"
+#include "Vehicle/HullComponentCore.h"
 #include "Vehicle/Vehicle.h"
 
 UVehicleComponent::UVehicleComponent()
@@ -81,6 +82,13 @@ void UVehicleComponent::TryEnterVehicle(AVehicle* VehicleToEnter)
 				OwningCharacter->MulticastToggleCollisions(false);
 				if (VehicleInterface->Execute_GetDrivingPose(VehicleToEnter) == EDrivingPose::EDP_Moped_Driver)
 				{
+					if(UCharacterAnimInstance* AnimInstance = Cast<UCharacterAnimInstance>(OwningCharacter->GetAnimInstance()))
+					{
+						if(InteractingVehicle &&  InteractingVehicle->GetHullMesh())
+						{
+							AnimInstance->InteractingHull = InteractingVehicle->GetHullMesh();
+						}
+					}
 					OwningCharacter->SetIsDriving(true);
 				}
 				

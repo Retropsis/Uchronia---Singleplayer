@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Vehicle/HullComponentCore.h"
 
 void UCharacterAnimInstance::NativeInitializeAnimation()
 {
@@ -105,6 +106,16 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bUseFABRIK = PlayerCharacter->GetCombatState() == ECombatState::ECS_Unoccupied && !PlayerCharacter->IsMelee();
 	bUseAimOffsets = PlayerCharacter->GetCombatState() == ECombatState::ECS_Unoccupied && !PlayerCharacter->IsMelee();
 	bTransformRightHand = PlayerCharacter->GetCombatState() == ECombatState::ECS_Unoccupied && !PlayerCharacter->IsMelee();
+
+	if(InteractingHull)
+	{
+		LeftHandleTransform = InteractingHull->GetSocketTransform("LeftHandSocket", RTS_World);
+		UKismetSystemLibrary::DrawDebugSphere(this, LeftHandleTransform.GetLocation(), 10.f, 12, FLinearColor::White);
+		GEngine->AddOnScreenDebugMessage(8552, 1.f, FColor::Emerald, FString::Printf(TEXT("Left: %s"), *LeftHandleTransform.GetLocation().ToString()));
+		RightHandleTransform = InteractingHull->GetSocketTransform("RightHandSocket", RTS_World);
+		UKismetSystemLibrary::DrawDebugSphere(this, RightHandleTransform.GetLocation(), 10.f, 12, FLinearColor::Red);
+		GEngine->AddOnScreenDebugMessage(8553, 1.f, FColor::Emerald, FString::Printf(TEXT("Right: %s"), *RightHandleTransform.GetLocation().ToString()));
+	}
 }
 
 void UCharacterAnimInstance::PlayFireMontage(bool bIsAiming)

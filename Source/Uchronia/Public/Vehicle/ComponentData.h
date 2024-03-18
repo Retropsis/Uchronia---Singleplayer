@@ -25,7 +25,7 @@ enum class EHardPoint : uint8
 	EHP_Hatch_Back_L UMETA(DisplayName="Hatch_Back_L"),
 	EHP_Hatch_Back_R UMETA(DisplayName="Hatch_Back_R"),
 	EHP_Helm UMETA(DisplayName="Helm"),
-	EHP_Engine_L UMETA(DisplayName="Engine"),
+	EHP_Engine UMETA(DisplayName="Engine"),
 	EHP_Lampost UMETA(DisplayName="Lampost"),
 	EHP_Gauge UMETA(DisplayName="Gauge"),
 	EHP_Moped_Hatch_L UMETA(DisplayName="Moped_Hatch_L"),

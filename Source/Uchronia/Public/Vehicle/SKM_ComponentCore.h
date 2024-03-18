@@ -3,10 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ComponentData.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Interaction/ComponentInterface.h"
 #include "SKM_ComponentCore.generated.h"
 
+class UNiagaraSystem;
+class AComponentCore;
 class UHardPointTraceComponent;
 class UHullComponentCore;
 class AVehicle;
@@ -24,15 +27,69 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void InitializeComponentCore(UHardPointTraceComponent* HardPointTrace);
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UFUNCTION(BlueprintCallable)
+	void ToggleComponentPreview(bool bShowPreview, USkeletalMesh* PreviewMesh);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FTransform GetSmokeSocketTransform() const;
+	
+	void MountingSplash() const;
+	
+	UFUNCTION(BlueprintCallable)
+	void MountSkeletalComponent(bool bIsMounting, USkeletalMesh* ComponentMesh, TSubclassOf<UAnimInstance> ComponentAnimClass, FName RowName);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void HandleSkeletalComponent();
+
+	UFUNCTION(BlueprintCallable)
+	void MountActorComponent(TSubclassOf<AActor> ComponentClass, FName HardPointSocket, FName DataRowName);
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void HandleActorComponent();
+
+	UFUNCTION(BlueprintCallable)
+	void SetupEngine(AActor* ComponentActor);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void SetupFuelGauge();
+	
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void SetupHelm(UAnimInstance* HelmAnimInstance);
+
+	/*
+	 * Properties
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Component")
+	TObjectPtr< UNiagaraSystem> MountingSplashSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Component")
+	TObjectPtr<UMaterialInstance> PreviewMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Vehicle|Component")
+	EHardPoint HardPoint = EHardPoint::EHP_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Vehicle|Component")
+	FDataTableRowHandle ComponentDataRow;
+	
+	/*
+	 * Instance
+	 */
+	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<AVehicle> OwningVehicle;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UHullComponentCore> OwningHullMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<UHardPointTraceComponent> HardPointTraceComponent;
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<UAnimInstance> ComponentAnimInstance;
 
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<AComponentCore> TargetComponentCore;
+
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<UHardPointTraceComponent> HardPointTraceComponent;
+	
+	UFUNCTION(BlueprintCallable) FName GetHardPointSocketName() const { return GetAttachSocketName(); }
 	UFUNCTION(BlueprintCallable) void SetOwningHullMesh(UHullComponentCore* HullMesh) { OwningHullMesh = HullMesh; }
 	UFUNCTION(BlueprintCallable) void SetOwningVehicle(AVehicle* Vehicle) { OwningVehicle = Vehicle; }
 	virtual AVehicle* GetOwningVehicle_Implementation() override;

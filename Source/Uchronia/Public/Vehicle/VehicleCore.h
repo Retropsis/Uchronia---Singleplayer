@@ -33,6 +33,10 @@ public:
 	UFUNCTION(BlueprintCallable) bool ShouldTickFuelConsumption();
 	UFUNCTION(BlueprintCallable) bool TickFuelConsumption(float QueriedAmount);
 	UFUNCTION(BlueprintCallable) void WaterSplashAtLocation();
+	UFUNCTION(BlueprintCallable) bool TryAddingEngine(AComponentCore* Engine);
+	UFUNCTION(BlueprintCallable) bool TryRemovingEngine(AComponentCore* Engine);
+	UFUNCTION(BlueprintCallable) bool TryAddingWheel(USKM_ComponentCore* Wheel);
+	UFUNCTION(BlueprintCallable) bool TryAddingFuelGauge(USKM_ComponentCore* FuelGauge);
 	
 	UFUNCTION() void HandleOnFuelEmptied(float InFuelModifier);
 	UFUNCTION() void HandleOnGearChanged(EGears NewGear);

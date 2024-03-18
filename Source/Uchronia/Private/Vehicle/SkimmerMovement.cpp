@@ -78,7 +78,12 @@ void USkimmerMovement::SolveMovement(const float DeltaTime)
 	
 	DeltaLocation = (Projection + (OwningVehicle->GetActorUpVector() * CurrentElevationSpeedFactor) + Gravity) * DeltaTime;
 
-	OwningVehicle->AddActorWorldOffset(DeltaLocation, true);
+	FHitResult Hit;
+	OwningVehicle->AddActorWorldOffset(DeltaLocation, true, &Hit, ETeleportType::None);
+	// OwningVehicle->AddMovementInput(DeltaLocation, 1.f, true);
+	
+	FVector Start = OwningVehicle->GetActorLocation() + FVector(0.f, 0.f, 200.f);
+	UKismetSystemLibrary::DrawDebugSphere(this, Hit.Location, 35.f, 12, FLinearColor::Red, 1.f);
 
 
 	// Sine Wave Wiggle
@@ -87,8 +92,7 @@ void USkimmerMovement::SolveMovement(const float DeltaTime)
 	// const float LocationZ = FMath::Clamp(OwningVehicle->GetActorLocation().Z + Sine, 40.f, 500.f);
 	const float LocationZ = FMath::Clamp(OwningVehicle->GetActorLocation().Z, 40.f, 500.f);
 	const FVector Location = FVector(OwningVehicle->GetActorLocation().X, OwningVehicle->GetActorLocation().Y,LocationZ );
-	OwningVehicle->SetActorLocation(Location, true);
-
+	// OwningVehicle->SetActorLocation(Location, true);
 
 	// Set Vehicle Rotation
 	const float Roll = CurrentSteeringSpeedFactor * ThrustRollFactor;

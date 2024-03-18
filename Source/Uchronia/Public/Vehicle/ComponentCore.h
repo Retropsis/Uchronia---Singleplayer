@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "ComponentCore.generated.h"
 
+class UVehicleCore;
 class USKM_ComponentCore;
 enum class EGears : uint8;
 class AVehicle;
@@ -25,8 +26,14 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent) void ToggleEngineTrail(bool bShouldActivate);
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent) void SetAnimInstance();
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TObjectPtr<AVehicle> OwningVehicle;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TObjectPtr<UVehicleCore> VehicleCore;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FDataTableRowHandle ComponentDataRow;
 
 protected:
 	virtual void BeginPlay() override;

@@ -2,11 +2,7 @@
 
 #include "Vehicle/HardPointTraceComponent.h"
 #include "Uchronia/Uchronia.h"
-
-EHardPoint UHardPointTraceComponent::GetHardPoint_Implementation() const
-{
-	return HardPoint;
-}
+#include "Vehicle/SKM_ComponentCore.h"
 
 void UHardPointTraceComponent::InitializeComponent()
 {
@@ -20,4 +16,19 @@ void UHardPointTraceComponent::InitializeComponent()
 void UHardPointTraceComponent::OnComponentCreated()
 {
 	Super::OnComponentCreated();
+}
+
+EHardPoint UHardPointTraceComponent::GetHardPoint_Implementation() const
+{
+	return HardPoint;
+}
+
+USkeletalMesh* UHardPointTraceComponent::GetComponentPreview_Implementation() const
+{
+	return HardPointComponent->GetSkeletalMeshAsset();
+}
+
+USKM_ComponentCore* UHardPointTraceComponent::GetHardPointComponent_Implementation() const
+{
+	return HardPointComponent;
 }

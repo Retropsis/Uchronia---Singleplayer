@@ -14,7 +14,9 @@ struct FGameplayTag;
 class UInputConfig;
 class UInputMappingContext;
 class UInputAction;
+class USaveGame;
 struct FInputActionValue;
+struct FEnhancedActionKeyMapping;
 /**
  * 
  */
@@ -46,6 +48,36 @@ public:
 	FOnAmmoAmountChangedSignature OnAmmoAmountChanged;
 	FOnAmmoAmountChangedSignature OnCarriedAmmoAmountChanged;
 	FOnAmmoAmountChangedSignature OnGrenadeAmountChanged;
+
+	/*
+	 * Key Remapping System
+	 */
+	// UPROPERTY(BlueprintReadWrite, Category="Input|Remap")
+	// TArray<FEnhancedActionKeyMapping> Mappings;
+	//
+	// UPROPERTY(BlueprintReadWrite, Category="Input|Remap")
+	// FString Slot;
+	//
+	// UPROPERTY(BlueprintReadWrite, Category="Input|Remap")
+	// TObjectPtr<USaveGame> SavedGame;
+	//
+	// UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	// FEnhancedActionKeyMapping GetMappingsFromSubsystem(FText DisplayName);
+	//
+	// UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	// void SaveSettings();
+	//
+	// UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	// void LoadSettings();
+	//
+	// UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	// void UpdateMappings(FText DisplayName, FKey NewKey);
+	//
+	// UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	// void RemoveKeySelectionMenu();
+	//
+	// UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	// void CreateKeySelectionMenu();
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category="Input")

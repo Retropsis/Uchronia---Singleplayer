@@ -146,17 +146,6 @@ void UVehicleCore::UpdateFuelGauges()
 	}
 }
 
-void UVehicleCore::ToggleEngines(const bool ShouldActivate)
-{
-	for (TObjectPtr<AComponentCore> Engine : Engines)
-	{
-		if(Engine->Implements<UEngineInterface>())
-		{
-			IEngineInterface::Execute_UpdateEngineTrail(Engine, ShouldActivate);
-		}
-	}
-}
-
 // TODO: Use DataTable to determine each engine power and fuel efficiency
 void UVehicleCore::SetFuelTickConsumptionByGear()
 {
@@ -203,6 +192,51 @@ void UVehicleCore::HandleOnFuelEmptied(float InFuelModifier)
 {
 	MovementState = EMovementState::EMS_Engine_On_Easing_Out;
 	FuelModifier = FMath::Clamp(InFuelModifier, 0.f, 1.f);
+}
+
+/*
+ * Engines
+*/
+
+void UVehicleCore::ToggleEngines(const bool ShouldActivate)
+{
+	for (TObjectPtr<AComponentCore> Engine : Engines)
+	{
+		if(Engine->Implements<UEngineInterface>())
+		{
+			IEngineInterface::Execute_UpdateEngineTrail(Engine, ShouldActivate);
+		}
+	}
+}
+
+/*
+ * Make this more complex with checks and could return false it failed adding it
+ */
+bool UVehicleCore::TryAddingEngine(AComponentCore* Engine)
+{
+	Engines.Add(Engine);
+	EngineCount++;
+	Engine->InitializeComponentCore(OwningVehicle);
+	return true;
+}
+
+bool UVehicleCore::TryRemovingEngine(AComponentCore* Engine)
+{
+	Engines.RemoveAt(Engines.Find(Engine));
+	EngineCount--;
+	return true;
+}
+
+bool UVehicleCore::TryAddingWheel(USKM_ComponentCore* Wheel)
+{
+	Wheels.Add(Wheel);
+	return true;
+}
+
+bool UVehicleCore::TryAddingFuelGauge(USKM_ComponentCore* FuelGauge)
+{
+	FuelGauges.Add(FuelGauge);
+	return true;
 }
 
 /*
